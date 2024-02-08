@@ -7,7 +7,7 @@ builder.Host.UseSerilog((context, config) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMovies();
+builder.Services.AddMovies(moviesOptions => moviesOptions.DbProvider = MoviesDbProvider.InMemory);
 
 var app = builder.Build();
 
