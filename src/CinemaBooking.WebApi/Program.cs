@@ -7,6 +7,8 @@ builder.Host.UseSerilog((context, config) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddMovies();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
