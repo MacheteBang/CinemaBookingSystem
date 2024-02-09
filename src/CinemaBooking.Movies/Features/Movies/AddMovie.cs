@@ -75,7 +75,10 @@ public class AddMovieEndpoint : ICarterModule
 
             if (result.IsFailure) return Results.BadRequest(result.Error);
 
-            return Results.CreatedAtRoute(nameof(GetMovie), new { id = result.Value });
+            return Results.CreatedAtRoute(nameof(GetMovie),
+                new { id = result.Value },
+                new { id = result.Value }
+            );
         })
         .WithName(nameof(AddMovie));
     }

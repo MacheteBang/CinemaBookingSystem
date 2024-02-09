@@ -4,12 +4,12 @@ public record GetMovieRequest(Guid Id);
 
 public static class GetMovie
 {
-    public class Query : IRequest<Result<Movie>>
+    public class Query : IRequest<Result<MovieResponse>>
     {
         public Guid Id { get; set; }
     }
 
-    internal sealed class Handler : IRequestHandler<Query, Result<Movie>>
+    internal sealed class Handler : IRequestHandler<Query, Result<MovieResponse>>
     {
         private readonly MoviesDbContext _dbContext;
 
@@ -18,10 +18,11 @@ public static class GetMovie
             _dbContext = dbContext;
         }
 
-        public async Task<Result<Movie>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<MovieResponse>> Handle(Query request, CancellationToken cancellationToken)
         {
             var movie = await _dbContext.Movies
                 .Where(m => m.Id == request.Id)
+                .Select(m => m.ToResponse())
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (movie is null) return MovieErrors.NotFound;

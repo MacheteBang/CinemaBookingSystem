@@ -1,7 +1,7 @@
 global using System.Text.Json.Serialization;
 
 global using CinemaBooking.Movies.Database;
-global using CinemaBooking.Movies.Entities;
+global using CinemaBooking.Movies.Domain;
 
 global using CinemaBooking.Common;
 

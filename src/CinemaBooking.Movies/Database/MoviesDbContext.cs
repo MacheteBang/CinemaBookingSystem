@@ -11,7 +11,7 @@ public class MoviesDbContext : DbContext
         modelBuilder.Entity<Movie>()
             .Property(m => m.Genres)
             .HasConversion(
-                o => string.Join(',', o),
+                o => string.Join(',', o ?? new List<Genre>()),
                 o => o.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(v => Enum.Parse<Genre>(v)).ToList()
             );
     }

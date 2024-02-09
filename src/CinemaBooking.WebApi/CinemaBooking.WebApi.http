@@ -1,6 +1,7 @@
 @hostAddress = http://localhost:8069
 
 ###
+# @name createMovie
 POST {{hostAddress}}/movies
 Content-Type: application/json
 
@@ -12,5 +13,6 @@ Content-Type: application/json
 }
 
 ###
-@id = bfe1aa9e-70ac-42dc-bf96-123f50f3c6be
-GET {{hostAddress}}/movies/{{id}}
+
+@movieId = {{createMovie.response.body.$.id}}
+GET {{hostAddress}}/movies/{{movieId}}
