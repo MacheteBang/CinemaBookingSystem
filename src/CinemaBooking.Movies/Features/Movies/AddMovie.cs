@@ -7,9 +7,9 @@ public static class AddMovie
     public class Command : IRequest<Result<Guid>>
     {
         public string Title { get; set; } = string.Empty;
-        public string Description { get; set; } = string.Empty;
-        public TimeSpan Duration { get; set; }
-        public ICollection<Genre> Genres { get; set; } = [];
+        public string? Description { get; set; }
+        public TimeSpan? Duration { get; set; }
+        public ICollection<Genre>? Genres { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -17,6 +17,7 @@ public static class AddMovie
         public Validator()
         {
             RuleFor(c => c.Title).NotEmpty();
+            RuleForEach(c => c.Genres).IsInEnum();
         }
     }
 
@@ -36,7 +37,7 @@ public static class AddMovie
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return new Error("Movie.Validation", validationResult.ToString());
+                return MovieErrors.Validation(validationResult.ToString());
             }
 
             Movie movie = new()
@@ -65,16 +66,16 @@ public class AddMovieEndpoint : ICarterModule
             AddMovie.Command command = new()
             {
                 Title = request.Title,
-                Description = request.Description ?? string.Empty,
-                Duration = request.Duration ?? default,
-                Genres = request.Genres ?? []
+                Description = request.Description,
+                Duration = request.Duration,
+                Genres = request.Genres
             };
 
             var result = await sender.Send(command);
 
             if (result.IsFailure) return Results.BadRequest(result.Error);
 
-            return Results.Ok(result.Value);
+            return Results.CreatedAtRoute(nameof(GetMovie), new { id = result.Value });
         })
         .WithName(nameof(AddMovie));
     }

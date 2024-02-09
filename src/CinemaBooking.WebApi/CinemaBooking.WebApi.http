@@ -5,5 +5,12 @@ POST {{hostAddress}}/movies
 Content-Type: application/json
 
 {
-    "title": "Spaceballs"
+    "title": "Spaceballs",
+    "genres": [
+        "Action"
+    ]
 }
+
+###
+@id = bfe1aa9e-70ac-42dc-bf96-123f50f3c6be
+GET {{hostAddress}}/movies/{{id}}
