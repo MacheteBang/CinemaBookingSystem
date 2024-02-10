@@ -20,3 +20,12 @@ GET {{hostAddress}}/movies
 
 ###
 DELETE {{hostAddress}}/movies/{{movieId}}
+
+###
+PUT {{hostAddress}}/movies/db184ed8-8d7c-4bde-bf67-a7362bb79dec
+Content-Type: application/json
+
+{
+    "title": "Spaceballs",
+    "genres": ["Comedy", "Action", "ScienceFiction"]
+}
