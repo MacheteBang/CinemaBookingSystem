@@ -4,12 +4,12 @@ public record GetMovieRequest(Guid Id);
 
 public static class GetMovie
 {
-    public class Query : IRequest<Result<MovieResponse>>
+    public class Query : IRequest<IResult>
     {
         public Guid Id { get; set; }
     }
 
-    internal sealed class Handler : IRequestHandler<Query, Result<MovieResponse>>
+    internal sealed class Handler : IRequestHandler<Query, IResult>
     {
         private readonly MoviesDbContext _dbContext;
 
@@ -18,16 +18,16 @@ public static class GetMovie
             _dbContext = dbContext;
         }
 
-        public async Task<Result<MovieResponse>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<IResult> Handle(Query request, CancellationToken cancellationToken)
         {
             var movie = await _dbContext.Movies
                 .Where(m => m.Id == request.Id)
                 .Select(m => m.ToResponse())
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (movie is null) return MovieErrors.NotFound;
+            if (movie is null) return Results.NotFound(MovieErrors.NotFound);
 
-            return await Task.FromResult(movie);
+            return await Task.FromResult(Results.Ok(movie));
         }
     }
 }
@@ -39,12 +39,7 @@ public class GetMovieEndpoint : ICarterModule
         app.MapGet("movies/{id}", async ([AsParameters] GetMovieRequest request, ISender sender) =>
         {
             GetMovie.Query query = new() { Id = request.Id };
-
-            var result = await sender.Send(query);
-
-            if (result.IsFailure) return Results.NotFound(result.Error);
-
-            return Results.Ok(result.Value);
+            return await sender.Send(query);
         })
         .WithName(nameof(GetMovie));
     }
