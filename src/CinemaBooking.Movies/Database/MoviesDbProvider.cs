@@ -2,5 +2,6 @@ namespace CinemaBooking.Movies.Database;
 
 public enum MoviesDbProvider
 {
-    InMemory
+    InMemory,
+    Sqlite
 }

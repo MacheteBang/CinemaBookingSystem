@@ -11,7 +11,11 @@ builder.Host.UseSerilog((context, config) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddMovies(moviesOptions => moviesOptions.DbProvider = MoviesDbProvider.InMemory);
+builder.Services.AddMovies(moviesOptions =>
+{
+    moviesOptions.DbProvider = MoviesDbProvider.Sqlite;
+    moviesOptions.DbConnectionString = "Datasource=movies.db";
+});
 
 var app = builder.Build();
 

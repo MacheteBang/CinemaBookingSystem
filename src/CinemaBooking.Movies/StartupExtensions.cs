@@ -17,7 +17,15 @@ public static class StartupExensions
         services.AddDbContext<MoviesDbContext>(dbOptions =>
         {
             if (options.DbProvider == MoviesDbProvider.InMemory) dbOptions.UseInMemoryDatabase("Movies");
+            if (options.DbProvider == MoviesDbProvider.Sqlite) dbOptions.UseSqlite(options.DbConnectionString);
         });
+
+        if (options.DbProvider == MoviesDbProvider.Sqlite)
+        {
+            using var serviceScope = services.BuildServiceProvider().CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<MoviesDbContext>();
+            dbContext.Database.EnsureCreated();
+        }
 
         services.AddMediatR(mediatROptions => mediatROptions.RegisterServicesFromAssembly(moviesAssembly));
         services.AddValidatorsFromAssembly(moviesAssembly);
