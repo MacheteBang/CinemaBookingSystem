@@ -17,3 +17,6 @@ GET {{hostAddress}}/movies/{{movieId}}
 
 ###
 GET {{hostAddress}}/movies
+
+###
+DELETE {{hostAddress}}/movies/{{movieId}}

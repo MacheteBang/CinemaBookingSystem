@@ -36,7 +36,7 @@ public class GetMovieEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("movies/{id}", async ([AsParameters] GetMovieRequest request, ISender sender) =>
+        app.MapGet("movies/{id:guid}", async ([AsParameters] GetMovieRequest request, ISender sender) =>
         {
             GetMovie.Query query = new() { Id = request.Id };
             return await sender.Send(query);
