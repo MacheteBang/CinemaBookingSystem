@@ -7,10 +7,13 @@ Content-Type: application/json
 
 {
     "title": "Spaceballs",
-    "genres": [4]
+    "genres": ["Comedy"]
 }
 
 ###
 
 @movieId = {{createMovie.response.body.$.id}}
 GET {{hostAddress}}/movies/{{movieId}}
+
+###
+GET {{hostAddress}}/movies

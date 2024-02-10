@@ -17,7 +17,7 @@ public static class AddMovie
         public Validator()
         {
             RuleFor(c => c.Title).NotEmpty();
-            RuleForEach(c => c.Genres).IsInEnum().WithMessage(MovieErrors.InvalidEnumTemplate);
+            RuleForEach(c => c.Genres).IsEnumName(typeof(Genre)).WithMessage(MovieErrors.InvalidEnumTemplate);
         }
     }
 
