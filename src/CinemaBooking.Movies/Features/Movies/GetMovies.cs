@@ -31,6 +31,7 @@ public class GetMoviesEndpoint : ICarterModule
         {
             return await sender.Send(new GetMovies.Query());
         })
-        .WithName(nameof(GetMovies));
+        .WithName(nameof(GetMovies))
+        .WithTags("Movies");
     }
 }

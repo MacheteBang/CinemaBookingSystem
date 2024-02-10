@@ -81,6 +81,7 @@ public class AddMovieEndpoint : ICarterModule
 
             return await sender.Send(command);
         })
-        .WithName(nameof(AddMovie));
+        .WithName(nameof(AddMovie))
+        .WithTags("Movies");
     }
 }
