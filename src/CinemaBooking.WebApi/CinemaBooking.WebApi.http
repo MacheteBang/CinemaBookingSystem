@@ -29,3 +29,6 @@ Content-Type: application/json
     "title": "Spaceballs",
     "genres": ["Comedy", "Action", "ScienceFiction"]
 }
+
+###
+GET {{hostAddress}}/genres
