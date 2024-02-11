@@ -2,7 +2,7 @@ namespace CinemaBooking.Movies.Features.Movies;
 
 public static class AddMovie
 {
-    public class Command : IRequest<IResult>
+    public class Command : IRequest<Result<Guid>>
     {
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
@@ -19,7 +19,7 @@ public static class AddMovie
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Command, IResult>
+    internal sealed class Handler : IRequestHandler<Command, Result<Guid>>
     {
         private readonly IValidator<Command> _validator;
         private readonly MoviesDbContext _dbContext;
@@ -30,12 +30,12 @@ public static class AddMovie
             _dbContext = dbContext;
         }
 
-        public async Task<IResult> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
         {
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return Results.BadRequest(MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage)));
+                return MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             Movie movie = new()
@@ -52,13 +52,7 @@ public static class AddMovie
             _dbContext.Movies.Add(movie);
             _dbContext.SaveChanges();
 
-            return await Task.FromResult(
-                Results.CreatedAtRoute(
-                    nameof(GetMovie),
-                    new { movie.Id },
-                    new { movie.Id }
-                )
-            );
+            return await Task.FromResult(movie.Id);
         }
     }
 }
@@ -71,7 +65,14 @@ public class AddMovieEndpoint : ICarterModule
     {
         app.MapPost("movies", async (Request request, ISender sender) =>
         {
-            return await sender.Send(request.ToCommand());
+            var response = await sender.Send(request.ToCommand());
+
+            return response.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovie), new { Id = response.Value }, new { Id = response.Value })
+                : response.Error.Code switch
+                {
+                    MovieErrors.Codes.Invalid => Results.BadRequest(response.Error.Messages),
+                    _ => Results.BadRequest()
+                };
         })
         .WithName(nameof(AddMovie))
         .WithTags("Movies");
