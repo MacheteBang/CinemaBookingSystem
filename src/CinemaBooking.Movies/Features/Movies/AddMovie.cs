@@ -1,7 +1,5 @@
 namespace CinemaBooking.Movies.Features.Movies;
 
-public record AddMovieRequest(string Title, string? Description = null, TimeSpan? Duration = null, ICollection<string>? Genres = null);
-
 public static class AddMovie
 {
     public class Command : IRequest<IResult>
@@ -67,21 +65,29 @@ public static class AddMovie
 
 public class AddMovieEndpoint : ICarterModule
 {
+    public record Request(string Title, string? Description = null, TimeSpan? Duration = null, ICollection<string>? Genres = null);
+
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("movies", async (AddMovieRequest request, ISender sender) =>
+        app.MapPost("movies", async (Request request, ISender sender) =>
         {
-            AddMovie.Command command = new()
-            {
-                Title = request.Title,
-                Description = request.Description,
-                Duration = request.Duration,
-                Genres = request.Genres
-            };
-
-            return await sender.Send(command);
+            return await sender.Send(request.ToCommand());
         })
         .WithName(nameof(AddMovie))
         .WithTags("Movies");
+    }
+}
+
+public static class AddMovieMapper
+{
+    public static AddMovie.Command ToCommand(this AddMovieEndpoint.Request request)
+    {
+        return new()
+        {
+            Title = request.Title,
+            Description = request.Description,
+            Duration = request.Duration,
+            Genres = request.Genres
+        };
     }
 }
