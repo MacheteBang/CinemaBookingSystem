@@ -1,4 +1,5 @@
 
+using CinemaBooking.Theaters.Featers.Theaters;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
@@ -66,7 +67,7 @@ public class AddTheaterEndpoint : IEndpoint
         {
             var result = await sender.Send(request.ToCommand());
 
-            return result.IsSuccess ? Results.Ok(new { Id = result.Value }) // TODO: Change to Created when Get Feature is implemented
+            return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetTheaterEndpoint), new { Id = result.Value }, new { Id = result.Value })
                 : result.Error.Code switch
                 {
                     TheaterErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),

@@ -34,6 +34,7 @@ Content-Type: application/json
 GET {{hostAddress}}/genres
 
 ###
+# @name createTheater
 POST {{hostAddress}}/theaters
 Content-Type: application/json
 
@@ -41,3 +42,7 @@ Content-Type: application/json
     "name": "01",
     "seatingArrangement": "Default"
 }
+
+###
+@theaterId = {{createTheater.response.body.$.id}}
+GET {{hostAddress}}/theaters/{{theaterId}}
