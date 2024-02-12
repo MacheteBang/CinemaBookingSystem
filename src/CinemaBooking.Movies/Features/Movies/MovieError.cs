@@ -18,4 +18,5 @@ public static class MovieErrors
 public sealed record MovieError(string Code, IEnumerable<string>? Messages = null) : Error(Code, Messages)
 {
     public static implicit operator Result<Movie>(MovieError error) => Result.Failure<Movie>(error);
+    public static implicit operator Result<ICollection<Movie>>(MovieError error) => Result.Failure<ICollection<Movie>>(error);
 }

@@ -2,9 +2,9 @@ namespace CinemaBooking.Movies.Features.Movies;
 
 public static class GetMovies
 {
-    public class Query : IRequest<IResult> { }
+    public class Query : IRequest<Result<ICollection<Movie>>> { }
 
-    internal sealed class Handler : IRequestHandler<Query, IResult>
+    internal sealed class Handler : IRequestHandler<Query, Result<ICollection<Movie>>>
     {
         private readonly MoviesDbContext _dbContext;
 
@@ -13,12 +13,12 @@ public static class GetMovies
             _dbContext = dbContext;
         }
 
-        public async Task<IResult> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<ICollection<Movie>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var movies = _dbContext.Movies
-                .Select(m => m.ToResponse());
+                .ToList();
 
-            return await Task.FromResult(Results.Ok(movies));
+            return await Task.FromResult(movies);
         }
     }
 }
@@ -29,7 +29,14 @@ public class GetMoviesEndpoint : ICarterModule
     {
         app.MapGet("movies", async (ISender sender) =>
         {
-            return await sender.Send(new GetMovies.Query());
+            var result = await sender.Send(new GetMovies.Query());
+
+            return result.IsSuccess ? Results.Ok(result.Value.Select(m => m.ToResponse()))
+                : result.Error.Code switch
+                {
+                    MovieErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    _ => Results.BadRequest()
+                };
         })
         .WithName(nameof(GetMoviesEndpoint))
         .WithTags("Movies");
