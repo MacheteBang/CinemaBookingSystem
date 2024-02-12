@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaBooking.WebApi", "src
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaBooking.Common", "src\CinemaBooking.Common\CinemaBooking.Common.csproj", "{1A589328-1584-482E-9128-5D1699730B35}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CinemaBooking.Theaters", "src\CinemaBooking.Theaters\CinemaBooking.Theaters.csproj", "{9DAFB7C3-AC4F-467E-98F1-DBF97D90FD7F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,10 +34,15 @@ Global
 		{1A589328-1584-482E-9128-5D1699730B35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1A589328-1584-482E-9128-5D1699730B35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1A589328-1584-482E-9128-5D1699730B35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9DAFB7C3-AC4F-467E-98F1-DBF97D90FD7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9DAFB7C3-AC4F-467E-98F1-DBF97D90FD7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9DAFB7C3-AC4F-467E-98F1-DBF97D90FD7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9DAFB7C3-AC4F-467E-98F1-DBF97D90FD7F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9B3E2026-BCBB-4724-9E71-EDDDB74887B3} = {A5349895-B1B8-4D03-AFA4-07A80D142472}
 		{D5D97702-FE62-4712-BCAA-581DC6F40F5B} = {A5349895-B1B8-4D03-AFA4-07A80D142472}
 		{1A589328-1584-482E-9128-5D1699730B35} = {A5349895-B1B8-4D03-AFA4-07A80D142472}
+		{9DAFB7C3-AC4F-467E-98F1-DBF97D90FD7F} = {A5349895-B1B8-4D03-AFA4-07A80D142472}
 	EndGlobalSection
 EndGlobal

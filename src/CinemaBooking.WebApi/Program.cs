@@ -18,6 +18,8 @@ builder.Services.AddMovies(moviesOptions =>
     moviesOptions.UseEndpoints = true;
 });
 
+builder.Services.AddTheaters(theatersOptions => { });
+
 var app = builder.Build();
 
 app.UseExceptionHandler(exHandler => exHandler.Run(async context =>
@@ -33,5 +35,6 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseMovies();
+app.UseTheaters();
 
 app.Run();

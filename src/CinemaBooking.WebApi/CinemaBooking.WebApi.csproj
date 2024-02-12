@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CinemaBooking.Movies\CinemaBooking.Movies.csproj" />
+    <ProjectReference Include="..\CinemaBooking.Theaters\CinemaBooking.Theaters.csproj" />
   </ItemGroup>
 
 </Project>
