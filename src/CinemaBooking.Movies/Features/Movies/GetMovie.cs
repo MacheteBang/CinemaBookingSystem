@@ -24,7 +24,7 @@ public static class GetMovie
 
             if (movie is null) return MovieErrors.NotFound;
 
-            return await Task.FromResult(movie);
+            return movie;
         }
     }
 }

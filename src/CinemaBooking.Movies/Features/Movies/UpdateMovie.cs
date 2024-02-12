@@ -51,9 +51,9 @@ public static class UpdateMovie
             };
 
             _dbContext.Movies.Update(movie);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return await Task.FromResult(Result.Success());
+            return Result.Success();
         }
     }
 }

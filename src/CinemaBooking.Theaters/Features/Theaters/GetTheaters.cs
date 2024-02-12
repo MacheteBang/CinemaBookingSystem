@@ -21,7 +21,7 @@ public static class GetTheaters
 
             if (theaters is null) return TheaterErrors.NotFound;
 
-            return await Task.FromResult(theaters);
+            return theaters;
         }
     }
 }

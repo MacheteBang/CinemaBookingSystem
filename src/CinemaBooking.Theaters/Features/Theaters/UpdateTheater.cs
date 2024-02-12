@@ -45,9 +45,9 @@ public static class UpdateTheater
             };
 
             _dbContext.Theaters.Update(theater);
-            _dbContext.SaveChanges();
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return await Task.FromResult(Result.Success());
+            return Result.Success();
         }
     }
 }

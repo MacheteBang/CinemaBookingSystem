@@ -24,7 +24,7 @@ public static class GetTheater
 
             if (theater is null) return TheaterErrors.NotFound;
 
-            return await Task.FromResult(theater);
+            return theater;
         }
     }
 }

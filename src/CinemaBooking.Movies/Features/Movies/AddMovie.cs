@@ -49,10 +49,10 @@ public static class AddMovie
                     : request.Genres?.Select(g => (Genre)Enum.Parse(typeof(Genre), g)).ToList()
             };
 
-            _dbContext.Movies.Add(movie);
-            _dbContext.SaveChanges();
+            await _dbContext.Movies.AddAsync(movie, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return await Task.FromResult(movie.Id);
+            return movie.Id;
         }
     }
 }

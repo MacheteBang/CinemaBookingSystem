@@ -15,10 +15,10 @@ public static class GetMovies
 
         public async Task<Result<ICollection<Movie>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            var movies = _dbContext.Movies
-                .ToList();
+            var movies = await _dbContext.Movies
+                .ToListAsync(cancellationToken);
 
-            return await Task.FromResult(movies);
+            return movies;
         }
     }
 }

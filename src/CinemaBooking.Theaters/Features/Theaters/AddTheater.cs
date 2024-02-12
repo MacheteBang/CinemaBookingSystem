@@ -44,10 +44,10 @@ public static class AddTheater
                 SeatingArrangement = SeatingArrangement.GetSeatingArrangement(request.SeatingArrangement)
             };
 
-            _dbContext.Theaters.Add(theater);
-            _dbContext.SaveChanges();
+            await _dbContext.Theaters.AddAsync(theater, cancellationToken);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return await Task.FromResult(theater.Id);
+            return theater.Id;
         }
     }
 }
