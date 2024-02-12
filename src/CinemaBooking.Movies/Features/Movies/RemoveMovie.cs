@@ -1,15 +1,13 @@
 namespace CinemaBooking.Movies.Features.Movies;
 
-public record RemoveMovieRequest(Guid Id);
-
 public static class RemoveMovie
 {
-    public class Command : IRequest<IResult>
+    public class Command : IRequest<Result>
     {
         public required Guid Id { get; set; }
     }
 
-    internal sealed class Handler : IRequestHandler<Command, IResult>
+    internal sealed class Handler : IRequestHandler<Command, Result>
     {
         public readonly MoviesDbContext _dbContext;
 
@@ -18,7 +16,7 @@ public static class RemoveMovie
             _dbContext = dbContext;
         }
 
-        public async Task<IResult> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
             IQueryable<Movie> getMovies() => _dbContext.Movies.Where(m => m.Id == request.Id);
 
@@ -32,21 +30,40 @@ public static class RemoveMovie
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
 
-            return Results.NoContent();
+            return Result.Success();
         }
     }
 }
 
 public class RemoveMovieEndpoint : ICarterModule
 {
+
+    public record Request(Guid Id);
+
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("movies/{id:guid}", async ([AsParameters] RemoveMovieRequest request, ISender sender) =>
+        app.MapDelete("movies/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
         {
-            RemoveMovie.Command command = new() { Id = request.Id };
-            return await sender.Send(command);
+            var result = await sender.Send(request.ToCommand());
+
+            return result.IsSuccess ? Results.NoContent()
+                : result.Error.Code switch
+                {
+                    _ => Results.BadRequest()
+                };
         })
         .WithName(nameof(RemoveMovieEndpoint))
         .WithTags("Movies");
+    }
+}
+
+public static class RemoveMovieMapper
+{
+    public static RemoveMovie.Command ToCommand(this RemoveMovieEndpoint.Request request)
+    {
+        return new()
+        {
+            Id = request.Id
+        };
     }
 }
