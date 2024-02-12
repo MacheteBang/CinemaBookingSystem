@@ -66,7 +66,7 @@ public class AddTheaterEndpoint : IEndpoint
         {
             var result = await sender.Send(request.ToCommand());
 
-            return result.IsSuccess ? Results.Ok(result.Value) // TODO: Change to Created when Get Feature is implemented
+            return result.IsSuccess ? Results.Ok(new { Id = result.Value }) // TODO: Change to Created when Get Feature is implemented
                 : result.Error.Code switch
                 {
                     TheaterErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),
