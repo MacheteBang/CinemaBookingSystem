@@ -82,7 +82,7 @@ public class UpdateMovieEndpoint : ICarterModule
 
             return await sender.Send(command);
         })
-        .WithName(nameof(UpdateMovie))
+        .WithName(nameof(UpdateMovieEndpoint))
         .WithTags("Movies");
     }
 }

@@ -46,7 +46,7 @@ public class RemoveMovieEndpoint : ICarterModule
             RemoveMovie.Command command = new() { Id = request.Id };
             return await sender.Send(command);
         })
-        .WithName(nameof(RemoveMovie))
+        .WithName(nameof(RemoveMovieEndpoint))
         .WithTags("Movies");
     }
 }

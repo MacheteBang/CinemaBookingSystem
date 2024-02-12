@@ -67,14 +67,14 @@ public class AddMovieEndpoint : ICarterModule
         {
             var response = await sender.Send(request.ToCommand());
 
-            return response.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovie), new { Id = response.Value }, new { Id = response.Value })
+            return response.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovieEndpoint), new { Id = response.Value }, new { Id = response.Value })
                 : response.Error.Code switch
                 {
                     MovieErrors.Codes.Invalid => Results.BadRequest(response.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })
-        .WithName(nameof(AddMovie))
+        .WithName(nameof(AddMovieEndpoint))
         .WithTags("Movies");
     }
 }

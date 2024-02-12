@@ -26,7 +26,7 @@ public class GetGenresEndpoint : ICarterModule
         {
             return await sender.Send(new GetGenres.Query());
         })
-        .WithName(nameof(GetGenres))
+        .WithName(nameof(GetGenresEndpoint))
         .WithTags("Genres");
     }
 }

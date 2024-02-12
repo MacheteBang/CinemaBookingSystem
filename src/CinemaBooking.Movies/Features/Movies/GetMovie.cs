@@ -41,7 +41,7 @@ public class GetMovieEndpoint : ICarterModule
             GetMovie.Query query = new() { Id = request.Id };
             return await sender.Send(query);
         })
-        .WithName(nameof(GetMovie))
+        .WithName(nameof(GetMovieEndpoint))
         .WithTags("Movies");
     }
 }
