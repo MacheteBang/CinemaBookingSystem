@@ -65,12 +65,12 @@ public class AddMovieEndpoint : ICarterModule
     {
         app.MapPost("movies", async (Request request, ISender sender) =>
         {
-            var response = await sender.Send(request.ToCommand());
+            var result = await sender.Send(request.ToCommand());
 
-            return response.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovieEndpoint), new { Id = response.Value }, new { Id = response.Value })
-                : response.Error.Code switch
+            return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovieEndpoint), new { Id = result.Value }, new { Id = result.Value })
+                : result.Error.Code switch
                 {
-                    MovieErrors.Codes.Invalid => Results.BadRequest(response.Error.Messages),
+                    MovieErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })
