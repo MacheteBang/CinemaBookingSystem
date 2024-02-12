@@ -1,12 +1,12 @@
-namespace CinemaBooking.Movies.Options;
+namespace CinemaBooking.Theaters.Options;
 
 /// <summary>
-///     Provides a simple surface for configuring the movies micro-service.
+///     Provides a simple surface for configuring the theaters micro-service.
 /// </summary>
-public class MoviesOptions
+public class TheatersOptions
 {
     /// <summary>
-    ///     Gets or sets the type of database to used to manage Movies data.
+    ///     Gets or sets the type of database to used to manage Theaters data.
     /// </summary>
     /// <remarks>
     ///     This can be useful in various environments to perform testing on

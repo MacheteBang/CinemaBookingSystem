@@ -29,7 +29,7 @@ public static class GetMovie
     }
 }
 
-public class GetMovieEndpoint : ICarterModule
+public class GetMovieEndpoint : IEndpoint
 {
     public record Request(Guid Id);
 

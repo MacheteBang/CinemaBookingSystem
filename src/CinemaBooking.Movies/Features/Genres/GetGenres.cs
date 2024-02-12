@@ -18,7 +18,7 @@ public static class GetGenres
     }
 }
 
-public class GetGenresEndpoint : ICarterModule
+public class GetGenresEndpoint : IEndpoint
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {

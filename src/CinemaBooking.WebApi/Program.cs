@@ -13,12 +13,17 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddMovies(moviesOptions =>
 {
-    moviesOptions.DbProvider = MoviesDbProvider.Sqlite;
+    moviesOptions.DbProvider = DbProvider.Sqlite;
     moviesOptions.DbConnectionString = "Datasource=movies.db";
     moviesOptions.UseEndpoints = true;
 });
 
-builder.Services.AddTheaters(theatersOptions => { });
+builder.Services.AddTheaters(theatersOptions =>
+{
+    theatersOptions.DbProvider = DbProvider.Sqlite;
+    theatersOptions.DbConnectionString = "Datasource=theaters.db";
+    theatersOptions.UseEndpoints = true;
+});
 
 var app = builder.Build();
 

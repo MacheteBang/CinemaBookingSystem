@@ -5,8 +5,6 @@ global using CinemaBooking.Movies.Domain;
 
 global using CinemaBooking.Common;
 
-global using Carter;
-
 global using FluentValidation;
 global using FluentValidation.Results;
 

@@ -58,7 +58,7 @@ public static class UpdateMovie
     }
 }
 
-public class UpdateMovieEndpoint : ICarterModule
+public class UpdateMovieEndpoint : IEndpoint
 {
     public record Request(
     string Title,

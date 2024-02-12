@@ -35,7 +35,7 @@ public static class RemoveMovie
     }
 }
 
-public class RemoveMovieEndpoint : ICarterModule
+public class RemoveMovieEndpoint : IEndpoint
 {
 
     public record Request(Guid Id);

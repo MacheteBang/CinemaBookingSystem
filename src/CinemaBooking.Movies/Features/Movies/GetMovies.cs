@@ -23,7 +23,7 @@ public static class GetMovies
     }
 }
 
-public class GetMoviesEndpoint : ICarterModule
+public class GetMoviesEndpoint : IEndpoint
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {

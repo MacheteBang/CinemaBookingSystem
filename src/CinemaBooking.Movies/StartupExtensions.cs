@@ -15,28 +15,23 @@ public static class StartupExensions
 
         services.AddSingleton(typeof(IOptions<MoviesOptions>), Microsoft.Extensions.Options.Options.Create(options));
 
-        Assembly moviesAssembly = typeof(StartupExensions).Assembly;
+        Assembly thisAssembly = typeof(StartupExensions).Assembly;
 
         services.AddDbContext<MoviesDbContext>(dbOptions =>
         {
-            if (options.DbProvider == MoviesDbProvider.InMemory) dbOptions.UseInMemoryDatabase("Movies");
-            if (options.DbProvider == MoviesDbProvider.Sqlite) dbOptions.UseSqlite(options.DbConnectionString);
+            if (options.DbProvider == DbProvider.InMemory) dbOptions.UseInMemoryDatabase("Movies");
+            if (options.DbProvider == DbProvider.Sqlite) dbOptions.UseSqlite(options.DbConnectionString);
         });
 
-        if (options.DbProvider == MoviesDbProvider.Sqlite)
+        if (options.DbProvider == DbProvider.Sqlite)
         {
             using var serviceScope = services.BuildServiceProvider().CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<MoviesDbContext>();
             dbContext.Database.EnsureCreated();
         }
 
-        services.AddMediatR(mediatROptions => mediatROptions.RegisterServicesFromAssembly(moviesAssembly));
-        services.AddValidatorsFromAssembly(moviesAssembly);
-
-        if (options.UseEndpoints)
-        {
-            services.AddCarter();
-        }
+        services.AddMediatR(mediatROptions => mediatROptions.RegisterServicesFromAssembly(thisAssembly));
+        services.AddValidatorsFromAssembly(thisAssembly);
 
         return services;
     }
@@ -48,9 +43,23 @@ public static class StartupExensions
 
         if (moviesOptions.Value.UseEndpoints)
         {
-            app.MapCarter();
+            app.MapEndpoints();
         }
 
         return app;
+    }
+
+    private static void MapEndpoints(this WebApplication app)
+    {
+        Assembly thisAssembly = typeof(StartupExensions).Assembly;
+
+        var endpoints = thisAssembly.GetTypes()
+            .Where(t => typeof(IEndpoint).IsAssignableFrom(t) && t.IsClass && !t.IsInterface && !t.IsAbstract);
+
+        foreach (var endpoint in endpoints)
+        {
+            var instance = Activator.CreateInstance(endpoint) as IEndpoint;
+            instance?.AddRoutes(app);
+        }
     }
 }

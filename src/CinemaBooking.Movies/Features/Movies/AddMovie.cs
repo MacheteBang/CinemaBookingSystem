@@ -57,7 +57,7 @@ public static class AddMovie
     }
 }
 
-public class AddMovieEndpoint : ICarterModule
+public class AddMovieEndpoint : IEndpoint
 {
     public record Request(string Title, string? Description = null, TimeSpan? Duration = null, ICollection<string>? Genres = null);
 

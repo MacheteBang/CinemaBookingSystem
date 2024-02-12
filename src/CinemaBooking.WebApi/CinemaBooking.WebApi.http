@@ -32,3 +32,12 @@ Content-Type: application/json
 
 ###
 GET {{hostAddress}}/genres
+
+###
+POST {{hostAddress}}/theaters
+Content-Type: application/json
+
+{
+    "name": "01",
+    "seatingArrangement": "Default"
+}
