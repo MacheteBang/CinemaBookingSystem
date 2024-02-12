@@ -47,7 +47,7 @@ public class GetTheaterEndpoint : IEndpoint
                 };
         })
         .WithName(nameof(GetTheaterEndpoint))
-        .WithTags("Movies");
+        .WithTags("Theaters");
     }
 }
 

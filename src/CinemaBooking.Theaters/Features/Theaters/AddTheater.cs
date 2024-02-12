@@ -70,7 +70,7 @@ public class AddTheaterEndpoint : IEndpoint
                 };
         })
         .WithName(nameof(AddTheaterEndpoint))
-        ;
+        .WithTags("Theaters");
     }
 }
 
