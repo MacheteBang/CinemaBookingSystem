@@ -15,6 +15,7 @@ builder.Services.AddMovies(moviesOptions =>
 {
     moviesOptions.DbProvider = MoviesDbProvider.Sqlite;
     moviesOptions.DbConnectionString = "Datasource=movies.db";
+    moviesOptions.UseEndpoints = true;
 });
 
 var app = builder.Build();

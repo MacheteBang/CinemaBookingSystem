@@ -1,6 +1,7 @@
 using System.Reflection;
 using CinemaBooking.Movies.Options;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace CinemaBooking.Movies;
 
@@ -11,6 +12,8 @@ public static class StartupExensions
     {
         MoviesOptions options = new();
         optionsAction(options);
+
+        services.AddSingleton(typeof(IOptions<MoviesOptions>), Microsoft.Extensions.Options.Options.Create(options));
 
         Assembly moviesAssembly = typeof(StartupExensions).Assembly;
 
@@ -30,14 +33,23 @@ public static class StartupExensions
         services.AddMediatR(mediatROptions => mediatROptions.RegisterServicesFromAssembly(moviesAssembly));
         services.AddValidatorsFromAssembly(moviesAssembly);
 
-        services.AddCarter();
+        if (options.UseEndpoints)
+        {
+            services.AddCarter();
+        }
 
         return services;
     }
 
     public static WebApplication UseMovies(this WebApplication app)
     {
-        app.MapCarter();
+        var moviesOptions = app.Services.GetService<IOptions<MoviesOptions>>()
+            ?? throw new Exception("Movies options missing");
+
+        if (moviesOptions.Value.UseEndpoints)
+        {
+            app.MapCarter();
+        }
 
         return app;
     }
