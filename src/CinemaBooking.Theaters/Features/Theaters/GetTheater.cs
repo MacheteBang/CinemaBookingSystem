@@ -1,8 +1,4 @@
-using CinemaBooking.Theaters.Features.Theaters;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-
-namespace CinemaBooking.Theaters.Featers.Theaters;
+namespace CinemaBooking.Theaters.Features.Theaters;
 
 public static class GetTheater
 {

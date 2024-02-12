@@ -1,8 +1,3 @@
-
-using CinemaBooking.Theaters.Featers.Theaters;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Routing;
-
 namespace CinemaBooking.Theaters.Features.Theaters;
 
 public static class AddTheater
