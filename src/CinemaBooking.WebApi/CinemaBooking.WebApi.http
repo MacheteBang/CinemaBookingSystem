@@ -54,3 +54,12 @@ GET {{hostAddress}}/theaters
 
 ###
 DELETE {{hostAddress}}/theaters/{{theaterId}}
+
+###
+PUT {{hostAddress}}/theaters/{{theaterId}}
+Content-Type: application/json
+
+{
+    "name": "02",
+    "seatingArrangement": "Default"
+}
