@@ -1,15 +1,8 @@
 namespace CinemaBooking.Movies.Features.Movies;
 
-public record UpdateMovieRequest(
-    string Title,
-    string? Description = null,
-    TimeSpan? Duration = null,
-    ICollection<string>? Genres = null
-);
-
 public static class UpdateMovie
 {
-    public class Command : IRequest<IResult>
+    public class Command : IRequest<Result>
     {
         public required Guid Id { get; set; }
         public string Title { get; set; } = string.Empty;
@@ -27,7 +20,7 @@ public static class UpdateMovie
         }
     }
 
-    internal sealed class Handler : IRequestHandler<Command, IResult>
+    internal sealed class Handler : IRequestHandler<Command, Result>
     {
         private readonly IValidator<Command> _validator;
         private readonly MoviesDbContext _dbContext;
@@ -38,12 +31,12 @@ public static class UpdateMovie
             _dbContext = dbContext;
         }
 
-        public async Task<IResult> Handle(Command request, CancellationToken cancellationToken)
+        public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return Results.BadRequest(MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage)));
+                return MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             Movie movie = new()
@@ -60,29 +53,50 @@ public static class UpdateMovie
             _dbContext.Movies.Update(movie);
             _dbContext.SaveChanges();
 
-            return await Task.FromResult(Results.Accepted());
+            return await Task.FromResult(Result.Success());
         }
     }
 }
 
 public class UpdateMovieEndpoint : ICarterModule
 {
+    public record Request(
+    string Title,
+    string? Description = null,
+    TimeSpan? Duration = null,
+    ICollection<string>? Genres = null
+);
+
+
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("movies/{id:guid}", async (Guid id, UpdateMovieRequest request, ISender sender) =>
+        app.MapPut("movies/{id:guid}", async (Guid id, Request request, ISender sender) =>
         {
-            UpdateMovie.Command command = new()
-            {
-                Id = id,
-                Title = request.Title,
-                Description = request.Description,
-                Duration = request.Duration,
-                Genres = request.Genres
-            };
+            var result = await sender.Send(request.ToCommand(id));
 
-            return await sender.Send(command);
+            return result.IsSuccess ? Results.Accepted()
+                : result.Error.Code switch
+                {
+                    MovieErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),
+                    _ => Results.BadRequest()
+                };
         })
         .WithName(nameof(UpdateMovieEndpoint))
         .WithTags("Movies");
+    }
+}
+
+public static class UpdateMovieMapper
+{
+    public static UpdateMovie.Command ToCommand(this UpdateMovieEndpoint.Request request, Guid id)
+    {
+        return new()
+        {
+            Id = id,
+            Title = request.Title,
+            Description = request.Description,
+            Duration = request.Duration,
+            Genres = request.Genres
+        };
     }
 }
