@@ -19,7 +19,7 @@ public static class StartupExensions
 
         services.AddDbContext<TheatersDbContext>(dbOptions =>
         {
-            if (options.DbProvider == DbProvider.InMemory) dbOptions.UseInMemoryDatabase("Movies");
+            if (options.DbProvider == DbProvider.InMemory) dbOptions.UseInMemoryDatabase("Theaters");
             if (options.DbProvider == DbProvider.Sqlite) dbOptions.UseSqlite(options.DbConnectionString);
         });
 
@@ -39,7 +39,7 @@ public static class StartupExensions
     public static WebApplication UseTheaters(this WebApplication app)
     {
         var theatersOptions = app.Services.GetService<IOptions<TheatersOptions>>()
-            ?? throw new Exception("Movies options missing");
+            ?? throw new Exception("Theaters options missing");
 
         if (theatersOptions.Value.UseEndpoints)
         {

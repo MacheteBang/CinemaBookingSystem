@@ -46,3 +46,11 @@ Content-Type: application/json
 ###
 @theaterId = {{createTheater.response.body.$.id}}
 GET {{hostAddress}}/theaters/{{theaterId}}
+
+###
+
+GET {{hostAddress}}/theaters
+
+
+###
+DELETE {{hostAddress}}/theaters/{{theaterId}}
