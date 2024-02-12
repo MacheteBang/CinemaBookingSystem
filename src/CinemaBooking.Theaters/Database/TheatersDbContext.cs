@@ -9,6 +9,10 @@ public class TheatersDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Theater>()
-            .HasMany<Seat>();
+            .Property(t => t.SeatingArrangement)
+            .HasConversion(
+                h => h.Name,
+                h => SeatingArrangement.GetSeatingArrangement(h)
+            );
     }
 }

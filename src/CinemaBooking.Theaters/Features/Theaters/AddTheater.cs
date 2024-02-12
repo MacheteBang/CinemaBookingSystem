@@ -41,7 +41,7 @@ public static class AddTheater
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
-                Seats = SeatingArrangement.GetSeatingArrangement(request.SeatingArrangement)
+                SeatingArrangement = SeatingArrangement.GetSeatingArrangement(request.SeatingArrangement)
             };
 
             _dbContext.Theaters.Add(theater);

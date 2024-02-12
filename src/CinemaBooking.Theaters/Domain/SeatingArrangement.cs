@@ -3,27 +3,31 @@ namespace CinemaBooking.Theaters.Domain;
 
 public class SeatingArrangement
 {
-    public static readonly SeatingArrangement Default = new();
-
-    private SeatingArrangement() { }
-
-    public static List<Seat> GetSeatingArrangement(SeatingArrangement seatingArrangement)
+    private static readonly Dictionary<string, SeatingArrangement> _dictionary = new()
     {
-        return seatingArrangement switch
-        {
-            _ => GetDefault()
-        };
+        {"Default", new(GetDefault, "Default")}
+    };
+
+    public static readonly SeatingArrangement Default = _dictionary["Default"];
+
+    public string Name { get; init; }
+    private readonly Func<List<Seat>> _seatFiller;
+
+    private SeatingArrangement(Func<List<Seat>> seatFiller, string name)
+    {
+        Name = name;
+        _seatFiller = seatFiller;
     }
 
-    public static List<Seat> GetSeatingArrangement(string seatingArrangement)
+    public static SeatingArrangement GetSeatingArrangement(string name)
     {
-        return seatingArrangement.ToUpper() switch
-        {
-            "DEFAULT" => GetSeatingArrangement(Default),
-            _ => throw new Exception("Seating arrangement not found")
-        };
+        return _dictionary[name];
     }
 
+    public List<Seat> GetSeats()
+    {
+        return _seatFiller.Invoke();
+    }
 
     private static List<Seat> GetDefault()
     {
@@ -59,4 +63,7 @@ public class SeatingArrangement
 
         return seats;
     }
+
+    public static implicit operator string(SeatingArrangement seatingArrangement) => seatingArrangement.Name;
+    public static implicit operator SeatingArrangement(string name) => GetSeatingArrangement(name);
 }
