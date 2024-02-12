@@ -2,18 +2,18 @@ namespace CinemaBooking.Movies.Features.Genres;
 
 public static class GetGenres
 {
-    public class Query : IRequest<IResult> { }
+    public class Query : IRequest<Result<ICollection<string>>> { }
 
-    internal sealed class Handler : IRequestHandler<Query, IResult>
+    internal sealed class Handler : IRequestHandler<Query, Result<ICollection<string>>>
     {
-        public async Task<IResult> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<ICollection<string>>> Handle(Query request, CancellationToken cancellationToken)
         {
-            ICollection<string> genres = Enum.GetValues(typeof(Genre))
+            List<string> genres = Enum.GetValues(typeof(Genre))
                 .Cast<Genre>()
                 .Select(e => e.ToString())
                 .ToList();
 
-            return await Task.FromResult(Results.Ok(genres));
+            return await Task.FromResult(genres);
         }
     }
 }
@@ -24,7 +24,14 @@ public class GetGenresEndpoint : ICarterModule
     {
         app.MapGet("genres", async (ISender sender) =>
         {
-            return await sender.Send(new GetGenres.Query());
+            var result = await sender.Send(new GetGenres.Query());
+
+            return result.IsSuccess ? Results.Ok(result.Value)
+                : result.Error.Code switch
+                {
+                    _ => Results.BadRequest()
+                };
+
         })
         .WithName(nameof(GetGenresEndpoint))
         .WithTags("Genres");
