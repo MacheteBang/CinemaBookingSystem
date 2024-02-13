@@ -1,0 +1,11 @@
+@hostAddress = http://localhost:8069
+
+### GetShowingsEnpoint
+# @name getShowings
+GET {{hostAddress}}/showings
+
+###
+@getShowingsId = {{getShowings.response.body.$.[0].id}}
+
+### GetSeats
+GET {{hostAddress}}/showings/{{getShowingsId}}/seats
