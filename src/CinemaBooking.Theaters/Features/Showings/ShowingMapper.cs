@@ -10,7 +10,9 @@ public static class ShowingMapper
             TheaterId = showing.TheaterId,
             MovieId = showing.MovieId,
             Showtime = showing.Showtime,
-            Seats = showing.Seats
+            SeatSummary = showing.Seats // FIXME: Logic for Summarizing seats should not be in a mapper.
+                .GroupBy(s => s.Occupancy)
+                .ToDictionary(g => g.Key, g => Convert.ToUInt32(g.Count()))
         };
     }
 }
