@@ -1,0 +1,24 @@
+@hostAddress = http://localhost:8069
+
+###
+GET {{hostAddress}}/showings
+
+###
+POST {{hostAddress}}/showings
+Content-Type: application/json
+
+{
+    "theaterId": "7864877c-c23c-4c76-bfe1-b46b1942b15a",
+    "movieId": "e2042f57-c376-4443-b44a-b961dced8da8",
+    "showtime": "2024-02-12T00:00"
+}
+
+###
+PUT {{hostAddress}}/showings/dd6a9e86-21ab-4030-86e3-1896d80da6c8
+Content-Type: application/json
+
+{
+    "theaterId": "7864877c-c23c-4c76-bfe1-b46b1942b15a",
+    "movieId": "e2042f57-c376-4443-b44a-b961dced8da8",
+    "showtime": "2024-02-13T00:00"
+}
