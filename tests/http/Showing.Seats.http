@@ -8,4 +8,11 @@ GET {{hostAddress}}/showings
 @getShowingsId = {{getShowings.response.body.$.[0].id}}
 
 ### GetSeats
+# @name getSeats
 GET {{hostAddress}}/showings/{{getShowingsId}}/seats
+
+###
+@getSeatsId = {{getSeats.response.body.$.[0].id}}
+
+### GetSeat
+GET {{hostAddress}}/showings/{{getShowingsId}}/seats/{{getSeatsId}}

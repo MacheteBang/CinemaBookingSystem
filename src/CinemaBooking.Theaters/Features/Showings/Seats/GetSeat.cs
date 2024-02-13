@@ -1,15 +1,14 @@
-
-
 namespace CinemaBooking.Theaters.Features.Showings.Seats;
 
-public static class GetSeats
+public static class GetSeat
 {
-    public class Query : IRequest<Result<List<Seat>>>
+    public class Query : IRequest<Result<Seat>>
     {
         public required Guid ShowingId { get; set; }
+        public required Guid Id { get; set; }
     }
 
-    internal sealed class Handler : IRequestHandler<Query, Result<List<Seat>>>
+    internal sealed class Handler : IRequestHandler<Query, Result<Seat>>
     {
         private readonly TheatersDbContext _dbContext;
 
@@ -18,7 +17,7 @@ public static class GetSeats
             _dbContext = dbContext;
         }
 
-        public async Task<Result<List<Seat>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<Seat>> Handle(Query request, CancellationToken cancellationToken)
         {
             var showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(sh => sh.Id == request.ShowingId);
@@ -26,20 +25,25 @@ public static class GetSeats
             if (showing is null) return SeatErrors.ShowingNotFound;
             if (showing.Seats is null) return SeatErrors.NotFound;
 
-            return showing.Seats;
+            var seat = showing.Seats
+                .SingleOrDefault(s => s.Id == request.Id);
+
+            if (seat is null) return SeatErrors.NotFound;
+
+            return seat;
         }
     }
 }
 
-public class GetSeatsEndpoint : IEndpoint
+public class GetSeatEndpoint : IEndpoint
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("showings/{showingId:guid}/seats", async (Guid showingId, ISender sender) =>
+        app.MapGet("showings/{showingId:guid}/seats/{id:guid}", async (Guid showingId, Guid id, ISender sender) =>
         {
-            var result = await sender.Send(new GetSeats.Query { ShowingId = showingId });
+            var result = await sender.Send(new GetSeat.Query { ShowingId = showingId, Id = id });
 
-            return result.IsSuccess ? Results.Ok(result.Value.Select(s => s.ToResponse()))
+            return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
                 {
                     SeatErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
@@ -47,7 +51,7 @@ public class GetSeatsEndpoint : IEndpoint
                     _ => Results.BadRequest()
                 };
         })
-        .WithName(nameof(GetSeatsEndpoint))
+        .WithName(nameof(GetSeatEndpoint))
         .WithTags("Showings");
     }
 }

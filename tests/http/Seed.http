@@ -1,0 +1,40 @@
+@hostAddress = http://localhost:8069
+
+### AddMovieEndpoint
+# @name addMovie
+POST {{hostAddress}}/movies
+Content-Type: application/json
+
+{
+    "title": "Spaceballs",
+    "genres": ["Comedy"]
+}
+###
+@movieId = {{addMovie.response.body.$.id}}
+
+###
+# @name addTheater
+POST {{hostAddress}}/theaters
+Content-Type: application/json
+
+{
+    "name": "01",
+    "seatingArrangement": "Default"
+}
+
+###
+@theaterId = {{addTheater.response.body.$.id}}
+
+###
+# @name addShowing
+POST {{hostAddress}}/showings
+Content-Type: application/json
+
+{
+    "theaterId": "{{theaterId}}",
+    "movieId": "{{movieId}}",
+    "showtime": "2024-02-12T00:00"
+}
+
+###
+@showingId = {{addShowing.response.body.$.id}}
