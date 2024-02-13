@@ -4,11 +4,15 @@
 # @name getShowings
 GET {{hostAddress}}/showings
 
+###
+
 @getShowingsId = {{getShowings.response.body.$.[0].id}}
 
 ### GetShowingEndpoint
 # @name getShowing
 GET {{hostAddress}}/showings/{{getShowingsId}}
+
+###
 
 @getShwoingId = {{getShowing.response.body.$.id}}
 
@@ -23,6 +27,7 @@ Content-Type: application/json
     "showtime": "2024-02-12T00:00"
 }
 
+###
 @addShowingId = {{addShowing.response.body.$.id}}
 
 ### UpdateShowingEndpoint

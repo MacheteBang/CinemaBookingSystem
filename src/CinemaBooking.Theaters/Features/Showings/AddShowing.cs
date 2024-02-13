@@ -51,7 +51,7 @@ public class AddShowingEndpoint : IEndpoint
         {
             var result = await sender.Send(request.ToCommand());
 
-            return result.IsSuccess ? Results.Ok(result.Value)
+            return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetShowingEndpoint), new { Id = result.Value }, new { Id = result.Value })
                 : result.Error.Code switch
                 {
                     ShowingErrors.Codes.InvalidTheater => Results.BadRequest(result.Error.Messages),
