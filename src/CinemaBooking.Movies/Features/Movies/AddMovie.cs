@@ -4,7 +4,7 @@ public static class AddMovie
 {
     public class Command : IRequest<Result<Guid>>
     {
-        public string Title { get; set; } = string.Empty;
+        public required string Title { get; set; }
         public string? Description { get; set; }
         public TimeSpan? Duration { get; set; }
         public ICollection<string>? Genres { get; set; }
@@ -15,7 +15,9 @@ public static class AddMovie
         public Validator()
         {
             RuleFor(c => c.Title).NotEmpty();
-            RuleForEach(c => c.Genres).IsEnumName(typeof(Genre)).WithMessage(MovieErrors.InvalidEnumTemplate);
+            RuleForEach(c => c.Genres)
+                .IsEnumName(typeof(Genre))
+                .WithMessage(MovieErrors.InvalidEnumTemplate);
         }
     }
 
@@ -59,7 +61,7 @@ public static class AddMovie
 
 public class AddMovieEndpoint : IEndpoint
 {
-    public record Request(string Title, string? Description = null, TimeSpan? Duration = null, ICollection<string>? Genres = null);
+    public record Request(string Title, string? Description, TimeSpan? Duration, ICollection<string>? Genres);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {

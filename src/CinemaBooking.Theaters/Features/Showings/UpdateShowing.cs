@@ -1,4 +1,3 @@
-
 namespace CinemaBooking.Theaters.Features.Showings;
 
 public static class UpdateShowing
@@ -11,17 +10,36 @@ public static class UpdateShowing
         public required DateTime Showtime { get; set; }
     }
 
+    public class Validator : AbstractValidator<Command>
+    {
+        public Validator()
+        {
+            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.TheaterId).NotEmpty();
+            RuleFor(c => c.MovieId).NotEmpty();
+            RuleFor(c => c.Showtime).NotEmpty();
+        }
+    }
+
     internal sealed class Handler : IRequestHandler<Command, Result>
     {
+        public readonly IValidator<Command> _validator;
         private readonly TheatersDbContext _dbContext;
 
-        public Handler(TheatersDbContext dbContext)
+        public Handler(IValidator<Command> validator, TheatersDbContext dbContext)
         {
             _dbContext = dbContext;
+            _validator = validator;
         }
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return ShowingErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             Showing? showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
 

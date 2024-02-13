@@ -5,14 +5,15 @@ public static class UpdateTheater
     public class Command : IRequest<Result>
     {
         public required Guid Id { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string SeatingArrangement { get; set; } = string.Empty;
+        public required string Name { get; set; }
+        public required string SeatingArrangement { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
     {
         public Validator()
         {
+            RuleFor(c => c.Id).NotEmpty();
             RuleFor(c => c.Name).NotEmpty();
             RuleFor(c => c.SeatingArrangement).NotNull();
         }
@@ -55,9 +56,9 @@ public static class UpdateTheater
 public class UpdateTheaterEndpoint : IEndpoint
 {
     public record Request(
-    string Name,
-    string SeatingArrangement
-);
+        string Name,
+        string SeatingArrangement
+    );
 
 
     public void AddRoutes(IEndpointRouteBuilder app)

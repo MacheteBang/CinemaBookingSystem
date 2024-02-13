@@ -8,17 +8,34 @@ public static class GetSeat
         public required Guid Id { get; set; }
     }
 
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.ShowingId).NotEmpty();
+        }
+    }
+
     internal sealed class Handler : IRequestHandler<Query, Result<Seat>>
     {
+        private readonly IValidator<Query> _validator;
         private readonly TheatersDbContext _dbContext;
 
-        public Handler(TheatersDbContext dbContext)
+        public Handler(IValidator<Query> validator, TheatersDbContext dbContext)
         {
+            _validator = validator;
             _dbContext = dbContext;
         }
 
         public async Task<Result<Seat>> Handle(Query request, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return SeatErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(sh => sh.Id == request.ShowingId);
 

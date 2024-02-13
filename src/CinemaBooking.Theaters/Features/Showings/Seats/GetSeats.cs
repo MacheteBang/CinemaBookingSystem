@@ -1,5 +1,3 @@
-
-
 namespace CinemaBooking.Theaters.Features.Showings.Seats;
 
 public static class GetSeats
@@ -9,17 +7,33 @@ public static class GetSeats
         public required Guid ShowingId { get; set; }
     }
 
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(c => c.ShowingId).NotEmpty();
+        }
+    }
+
     internal sealed class Handler : IRequestHandler<Query, Result<List<Seat>>>
     {
+        private readonly IValidator<Query> _validator;
         private readonly TheatersDbContext _dbContext;
 
-        public Handler(TheatersDbContext dbContext)
+        public Handler(IValidator<Query> validator, TheatersDbContext dbContext)
         {
+            _validator = validator;
             _dbContext = dbContext;
         }
 
         public async Task<Result<List<Seat>>> Handle(Query request, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return SeatErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(sh => sh.Id == request.ShowingId);
 

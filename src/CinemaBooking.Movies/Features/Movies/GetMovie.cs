@@ -4,20 +4,36 @@ public static class GetMovie
 {
     public class Query : IRequest<Result<Movie>>
     {
-        public Guid Id { get; set; }
+        public required Guid Id { get; set; }
+    }
+
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(c => c.Id).NotEmpty();
+        }
     }
 
     internal sealed class Handler : IRequestHandler<Query, Result<Movie>>
     {
+        private readonly IValidator<Query> _validator;
         private readonly MoviesDbContext _dbContext;
 
-        public Handler(MoviesDbContext dbContext)
+        public Handler(IValidator<Query> validator, MoviesDbContext dbContext)
         {
+            _validator = validator;
             _dbContext = dbContext;
         }
 
         public async Task<Result<Movie>> Handle(Query request, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var movie = await _dbContext.Movies
                 .Where(m => m.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken);

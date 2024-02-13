@@ -4,8 +4,8 @@ public static class AddTheater
 {
     public class Command : IRequest<Result<Guid>>
     {
-        public string Name { get; set; } = string.Empty;
-        public string SeatingArrangement { get; set; } = string.Empty;
+        public required string Name { get; set; }
+        public required string SeatingArrangement { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -13,14 +13,13 @@ public static class AddTheater
         public Validator()
         {
             RuleFor(c => c.Name).NotEmpty();
-            RuleFor(c => c.SeatingArrangement).NotNull();
+            RuleFor(c => c.SeatingArrangement).NotEmpty();
         }
     }
 
     internal sealed class Handler : IRequestHandler<Command, Result<Guid>>
     {
         public readonly IValidator<Command> _validator;
-
         public readonly TheatersDbContext _dbContext;
 
         public Handler(IValidator<Command> validator, TheatersDbContext dbContext)
