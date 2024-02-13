@@ -9,7 +9,7 @@ public static class SeatMapper
             Id = seat.Id,
             Occupancy = seat.Occupancy,
             Row = seat.Row,
-            SeatNumber = seat.SeatNumber
+            Number = seat.Number
         };
     }
 }

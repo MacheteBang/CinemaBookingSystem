@@ -42,7 +42,7 @@ public class SeatingArrangement
                 {
                     Id = Guid.NewGuid(),
                     Row = letter.ToString(),
-                    SeatNumber = i
+                    Number = i
                 });
             }
         }
@@ -56,7 +56,7 @@ public class SeatingArrangement
                 {
                     Id = Guid.NewGuid(),
                     Row = letter.ToString(),
-                    SeatNumber = i
+                    Number = i
                 });
             }
         }
