@@ -63,7 +63,7 @@ public class AddShowingEndpoint : IEndpoint
     public record Request(Guid MovieId, Guid TheaterId, DateTime ShowTime);
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("showings", async (Request request, ISender sender) =>
+        app.MapPost("showings", async ([AsParameters] Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
 

@@ -57,7 +57,7 @@ public class AddTheaterEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("theaters", async (Request request, ISender sender) =>
+        app.MapPost("theaters", async ([AsParameters] Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
 
