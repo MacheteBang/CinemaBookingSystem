@@ -20,7 +20,7 @@ public static class GetMovie
         {
             var movie = await _dbContext.Movies
                 .Where(m => m.Id == request.Id)
-                .FirstOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(cancellationToken);
 
             if (movie is null) return MovieErrors.NotFound;
 

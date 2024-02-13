@@ -1,9 +1,19 @@
 @hostAddress = http://localhost:8069
 
-###
+### GetShowingsEnpoint
+# @name getShowings
 GET {{hostAddress}}/showings
 
-###
+@getShowingsId = {{getShowings.response.body.$.[0].id}}
+
+### GetShowingEndpoint
+# @name getShowing
+GET {{hostAddress}}/showings/{{getShowingsId}}
+
+@getShwoingId = {{getShowing.response.body.$.id}}
+
+### AddShowingEndpoint
+# @name addShowing
 POST {{hostAddress}}/showings
 Content-Type: application/json
 
@@ -13,8 +23,11 @@ Content-Type: application/json
     "showtime": "2024-02-12T00:00"
 }
 
-###
-PUT {{hostAddress}}/showings/dd6a9e86-21ab-4030-86e3-1896d80da6c8
+@addShowingId = {{addShowing.response.body.$.id}}
+
+### UpdateShowingEndpoint
+# @name updateShowing
+PUT {{hostAddress}}/showings/{{addShowingId}}
 Content-Type: application/json
 
 {
@@ -22,3 +35,6 @@ Content-Type: application/json
     "movieId": "e2042f57-c376-4443-b44a-b961dced8da8",
     "showtime": "2024-02-13T00:00"
 }
+
+### GetShowingEndpoint
+DELETE {{hostAddress}}/showings/{{addShowingId}}

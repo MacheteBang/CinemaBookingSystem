@@ -1,4 +1,3 @@
-
 namespace CinemaBooking.Theaters.Features.Theaters;
 
 public static class GetTheaters
