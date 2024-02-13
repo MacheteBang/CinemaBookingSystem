@@ -73,3 +73,6 @@ Content-Type: application/json
     "movieId": "e2042f57-c376-4443-b44a-b961dced8da8",
     "showtime": "2024-02-12T00:00"
 }
+
+###
+GET {{hostAddress}}/showings
