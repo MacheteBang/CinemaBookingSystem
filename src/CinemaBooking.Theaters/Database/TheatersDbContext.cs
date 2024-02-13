@@ -17,6 +17,11 @@ public class TheatersDbContext : DbContext
             );
 
         modelBuilder.Entity<Showing>()
-            .OwnsMany(s => s.Seats);
+            .OwnsMany(s => s.Seats)
+            .Property(s => s.Occupancy)
+            .HasConversion(
+                e => e.ToString(),
+                e => Enum.Parse<SeatOccupancy>(e)
+            );
     }
 }
