@@ -24,7 +24,7 @@ public class SeatingArrangement
         return _dictionary[name];
     }
 
-    public List<Seat> GetSeats()
+    public List<Seat> CreateSeats()
     {
         return _seatFiller.Invoke();
     }
