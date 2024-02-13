@@ -65,7 +65,7 @@ public class AddMovieEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("movies", async (Request request, ISender sender) =>
+        app.MapPost("movies", async ([AsParameters] Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
 
