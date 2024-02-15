@@ -37,13 +37,13 @@ public static class UpdateShowing
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return ShowingErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return ShowingError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             Showing? showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
 
-            if (showing is null) return ShowingErrors.NotFound;
+            if (showing is null) return ShowingError.NotFound;
 
             showing.TheaterId = request.TheaterId;
             showing.MovieId = request.MovieId;
@@ -74,7 +74,7 @@ public class UpdateShowingEndpoint : IEndpoint
             return result.IsSuccess ? Results.Accepted()
                 : result.Error.Code switch
                 {
-                    ShowingErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    ShowingError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

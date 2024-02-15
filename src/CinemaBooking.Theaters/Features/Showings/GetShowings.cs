@@ -18,7 +18,7 @@ public static class GetShowings
             var showings = await _dbContext.Showings
                 .ToListAsync(cancellationToken);
 
-            if (showings is null) return ShowingErrors.NotFound;
+            if (showings is null) return ShowingError.NotFound;
 
             return showings;
         }
@@ -36,7 +36,7 @@ public class GetShowingsEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.Select(t => t.ToResponse()))
                 : result.Error.Code switch
                 {
-                    ShowingErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    ShowingError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

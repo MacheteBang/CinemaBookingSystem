@@ -33,7 +33,7 @@ public static class AddTheater
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return TheaterErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return TheaterError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             Theater theater = new()
@@ -64,7 +64,7 @@ public class AddTheaterEndpoint : IEndpoint
             return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetTheaterEndpoint), new { Id = result.Value }, new { Id = result.Value })
                 : result.Error.Code switch
                 {
-                    TheaterErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),
+                    TheaterError.Codes.Invalid => Results.BadRequest(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

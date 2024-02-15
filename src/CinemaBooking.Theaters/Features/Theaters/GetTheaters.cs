@@ -18,7 +18,7 @@ public static class GetTheaters
             var theaters = await _dbContext.Theaters
                 .ToListAsync(cancellationToken);
 
-            if (theaters is null) return TheaterErrors.NotFound;
+            if (theaters is null) return TheaterError.NotFound;
 
             return theaters;
         }
@@ -36,7 +36,7 @@ public class GetTheatersEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.Select(t => t.ToResponse()))
                 : result.Error.Code switch
                 {
-                    TheaterErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    TheaterError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

@@ -22,7 +22,7 @@ public static class GetShowing
                 .Where(t => t.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (showing is null) return ShowingErrors.NotFound;
+            if (showing is null) return ShowingError.NotFound;
 
             return showing;
         }
@@ -42,7 +42,7 @@ public class GetShowingEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
                 {
-                    ShowingErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    ShowingError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

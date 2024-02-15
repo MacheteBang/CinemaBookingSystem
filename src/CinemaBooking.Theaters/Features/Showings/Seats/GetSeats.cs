@@ -32,14 +32,14 @@ public static class GetSeats
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return SeatErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return SeatError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(sh => sh.Id == request.ShowingId);
 
-            if (showing is null) return SeatErrors.ShowingNotFound;
-            if (showing.Seats is null) return SeatErrors.NotFound;
+            if (showing is null) return SeatError.ShowingNotFound;
+            if (showing.Seats is null) return SeatError.NotFound;
 
             var filteredSeats = showing.Seats
                 .Where(s => request.Occupancy is null || s.Occupancy == request.Occupancy);
@@ -66,8 +66,8 @@ public class GetSeatsEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.Select(s => s.ToResponse()))
                 : result.Error.Code switch
                 {
-                    SeatErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    SeatErrors.Codes.ShowingNotFound => Results.NotFound(result.Error.Messages),
+                    SeatError.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    SeatError.Codes.ShowingNotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

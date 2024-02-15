@@ -31,14 +31,14 @@ public static class GetTheater
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return TheaterErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return TheaterError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var theater = await _dbContext.Theaters
                 .Where(t => t.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (theater is null) return TheaterErrors.NotFound;
+            if (theater is null) return TheaterError.NotFound;
 
             return theater;
         }
@@ -58,7 +58,7 @@ public class GetTheaterEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
                 {
-                    TheaterErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    TheaterError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

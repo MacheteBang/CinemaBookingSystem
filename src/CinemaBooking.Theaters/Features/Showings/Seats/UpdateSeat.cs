@@ -37,24 +37,24 @@ public class UpdateSeat
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return SeatErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return SeatError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var showing = await _mediator.Send(new GetShowing.Query { Id = request.ShowingId }, cancellationToken);
-            if (showing.IsFailure) return SeatErrors.Validation(showing.Error.Messages ?? []);
+            if (showing.IsFailure) return SeatError.Validation(showing.Error.Messages ?? []);
 
             var seat = showing.Value.Seats.SingleOrDefault(s => s.Id == request.Id);
-            if (seat is null) return SeatErrors.NotFound;
+            if (seat is null) return SeatError.NotFound;
 
             var actionResult = request.Action switch
             {
                 Seat.OccupancyAction.Reserve => seat.Reserve(),
                 Seat.OccupancyAction.Release => seat.Release(),
                 Seat.OccupancyAction.Confirm => seat.Confirm(),
-                _ => SeatErrors.InvalidAction
+                _ => SeatError.InvalidAction
             };
 
-            if (actionResult.IsFailure) return SeatErrors.OccupancyChange;
+            if (actionResult.IsFailure) return SeatError.OccupancyChange;
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
@@ -79,7 +79,7 @@ public class UpdateSeatEndpoint : IEndpoint
                 return result.IsSuccess ? Results.Ok(result.Value)
                     : result.Error.Code switch
                     {
-                        SeatErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                        SeatError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                         _ => Results.BadRequest(result.Error.Messages)
                     };
             });

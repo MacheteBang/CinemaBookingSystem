@@ -35,7 +35,7 @@ public static class UpdateTheater
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return TheaterErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return TheaterError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             Theater theater = new()
@@ -70,7 +70,7 @@ public class UpdateTheaterEndpoint : IEndpoint
             return result.IsSuccess ? Results.Accepted()
                 : result.Error.Code switch
                 {
-                    TheaterErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),
+                    TheaterError.Codes.Invalid => Results.BadRequest(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

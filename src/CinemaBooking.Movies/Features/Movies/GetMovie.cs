@@ -31,14 +31,14 @@ public static class GetMovie
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return MovieError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var movie = await _dbContext.Movies
                 .Where(m => m.Id == request.Id)
                 .SingleOrDefaultAsync(cancellationToken);
 
-            if (movie is null) return MovieErrors.NotFound;
+            if (movie is null) return MovieError.NotFound;
 
             return movie;
         }
@@ -58,7 +58,7 @@ public class GetMovieEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
                 {
-                    MovieErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    MovieError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

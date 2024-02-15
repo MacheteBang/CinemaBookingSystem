@@ -35,11 +35,11 @@ public static class AddShowing
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return ShowingErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return ShowingError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             var theater = await _dbContext.Theaters.SingleOrDefaultAsync(t => t.Id == request.TheaterId, cancellationToken);
-            if (theater is null) return ShowingErrors.InvalidTheather;
+            if (theater is null) return ShowingError.InvalidTheather;
 
             Showing showing = new()
             {
@@ -70,7 +70,7 @@ public class AddShowingEndpoint : IEndpoint
             return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetShowingEndpoint), new { Id = result.Value }, new { Id = result.Value })
                 : result.Error.Code switch
                 {
-                    ShowingErrors.Codes.InvalidTheater => Results.BadRequest(result.Error.Messages),
+                    ShowingError.Codes.InvalidTheater => Results.BadRequest(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

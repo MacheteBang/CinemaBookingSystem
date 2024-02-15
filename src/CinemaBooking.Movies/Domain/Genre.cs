@@ -1,6 +1,5 @@
 namespace CinemaBooking.Movies;
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum Genre
 {
     Action,

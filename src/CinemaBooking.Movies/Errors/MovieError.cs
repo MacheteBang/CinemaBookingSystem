@@ -1,6 +1,6 @@
 namespace CinemaBooking.Movies.Features.Movies;
 
-public static class MovieErrors
+public sealed record MovieError(string Code, IEnumerable<string>? Messages = null) : Error(Code, Messages)
 {
     public static class Codes
     {
@@ -8,15 +8,9 @@ public static class MovieErrors
         public const string NotFound = "Movie.NotFound";
     }
 
-
-    public const string InvalidEnumTemplate = "'{PropertyValue}' is not a valid Genre.";
-
     public static MovieError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
     public static readonly MovieError NotFound = new(Codes.NotFound, ["No movies found."]);
-}
 
-public sealed record MovieError(string Code, IEnumerable<string>? Messages = null) : Error(Code, Messages)
-{
     public static implicit operator Result(MovieError error) => Result.Failure(error);
     public static implicit operator Result<Movie>(MovieError error) => Result.Failure<Movie>(error);
     public static implicit operator Result<ICollection<Movie>>(MovieError error) => Result.Failure<ICollection<Movie>>(error);

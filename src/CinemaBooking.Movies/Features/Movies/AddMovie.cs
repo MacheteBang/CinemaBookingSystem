@@ -17,7 +17,7 @@ public static class AddMovie
             RuleFor(c => c.Title).NotEmpty();
             RuleForEach(c => c.Genres)
                 .IsEnumName(typeof(Genre))
-                .WithMessage(MovieErrors.InvalidEnumTemplate);
+                .WithMessage(MovieError.InvalidEnumTemplate);
         }
     }
 
@@ -37,7 +37,7 @@ public static class AddMovie
             ValidationResult validationResult = _validator.Validate(request);
             if (!validationResult.IsValid)
             {
-                return MovieErrors.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+                return MovieError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
             Movie movie = new()
@@ -72,7 +72,7 @@ public class AddMovieEndpoint : IEndpoint
             return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovieEndpoint), new { Id = result.Value }, new { Id = result.Value })
                 : result.Error.Code switch
                 {
-                    MovieErrors.Codes.Invalid => Results.BadRequest(result.Error.Messages),
+                    MovieError.Codes.Invalid => Results.BadRequest(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })

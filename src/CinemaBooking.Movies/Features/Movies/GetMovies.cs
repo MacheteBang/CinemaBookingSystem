@@ -34,7 +34,7 @@ public class GetMoviesEndpoint : IEndpoint
             return result.IsSuccess ? Results.Ok(result.Value.Select(m => m.ToResponse()))
                 : result.Error.Code switch
                 {
-                    MovieErrors.Codes.NotFound => Results.NotFound(result.Error.Messages),
+                    MovieError.Codes.NotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })
