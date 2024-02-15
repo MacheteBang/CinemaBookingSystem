@@ -16,3 +16,14 @@ GET {{hostAddress}}/showings/{{getShowingsId}}/seats
 
 ### GetSeat
 GET {{hostAddress}}/showings/{{getShowingsId}}/seats/{{getSeatsId}}
+
+### GetSeats (filtered
+GET {{hostAddress}}/showings/{{getShowingsId}}/seats?occupancy=Reserved
+
+### UpdateSeat
+PATCH {{hostAddress}}/showings/{{getShowingsId}}/seats/{{getSeatsId}}
+Content-Type: application/json
+
+{
+    "action": "Confirm"
+}
