@@ -19,13 +19,11 @@ public class Seat
 
         return Result.Success();
     }
-
     public Result Release()
     {
         Occupancy = OccupancyState.Vacant;
         return Result.Success();
     }
-
     public Result Confirm()
     {
         if (Occupancy != OccupancyState.Pending)
@@ -39,7 +37,6 @@ public class Seat
         return Result.Success();
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum OccupancyState
     {
         Vacant = 1,
@@ -47,7 +44,6 @@ public class Seat
         Reserved = 3
     }
 
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum OccupancyAction
     {
         Reserve = 1,

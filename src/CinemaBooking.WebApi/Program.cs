@@ -4,10 +4,11 @@ builder.Host.UseSerilog((context, config) =>
     config.ReadFrom.Configuration(context.Configuration)
 );
 
-// builder.Services.Configure<JsonOptions>(options =>
-// {
-//     options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-// });
+// Set the JSON serializer options
+builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
+{
+    options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -25,5 +25,5 @@ PATCH {{hostAddress}}/showings/{{getShowingsId}}/seats/{{getSeatsId}}
 Content-Type: application/json
 
 {
-    "action": "Confirm"
+    "action": "Release"
 }
