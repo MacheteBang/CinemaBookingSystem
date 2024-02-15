@@ -3,6 +3,7 @@ global using CinemaBooking.Theaters.Database;
 global using CinemaBooking.Theaters.Domain;
 global using CinemaBooking.Theaters.Errors;
 global using CinemaBooking.Theaters.Features.Showings;
+global using CinemaBooking.Theaters.Mappers;
 
 global using CinemaBooking.Common;
 

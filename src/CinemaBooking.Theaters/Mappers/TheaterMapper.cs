@@ -1,4 +1,4 @@
-namespace CinemaBooking.Theaters.Features.Theaters;
+namespace CinemaBooking.Theaters.Mappers;
 
 public static class TheaterMapper
 {
