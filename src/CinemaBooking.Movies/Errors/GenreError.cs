@@ -1,4 +1,4 @@
-namespace CinemaBooking.Movies.Features.Genres;
+namespace CinemaBooking.Movies.Errors;
 
 public sealed record GenreError(string Code, IEnumerable<string>? Messages = null) : Error(Code, Messages)
 {

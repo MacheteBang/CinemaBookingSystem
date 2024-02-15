@@ -1,3 +1,4 @@
+global using CinemaBooking.Theaters.Contracts;
 global using CinemaBooking.Theaters.Database;
 global using CinemaBooking.Theaters.Domain;
 global using CinemaBooking.Theaters.Errors;

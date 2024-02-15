@@ -1,4 +1,4 @@
-namespace CinemaBooking.Theaters.Features.Theaters;
+namespace CinemaBooking.Theaters.Contracts;
 
 public class TheaterResponse
 {

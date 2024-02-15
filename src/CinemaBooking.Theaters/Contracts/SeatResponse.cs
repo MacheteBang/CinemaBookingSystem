@@ -1,4 +1,4 @@
-namespace CinemaBooking.Theaters.Features.Showings.Seats;
+namespace CinemaBooking.Theaters.Contracts;
 
 public class SeatResponse
 {
