@@ -1,8 +1,7 @@
 namespace CinemaBooking.Movies.Domain;
 
-public class Movie
+public class Movie : Entity
 {
-    public required Guid Id { get; set; }
     public required string Title { get; set; }
     public string? Description { get; set; }
     public TimeSpan? Duration { get; set; }

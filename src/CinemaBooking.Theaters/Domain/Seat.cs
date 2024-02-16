@@ -1,8 +1,7 @@
 namespace CinemaBooking.Theaters.Domain;
 
-public class Seat
+public class Seat : Entity
 {
-    public required Guid Id { get; set; }
     public OccupancyState Occupancy { get; set; } = OccupancyState.Vacant;
     public DateTime? OccupancyStateExpiration { get; set; } = null;
     public required string Row { get; set; }

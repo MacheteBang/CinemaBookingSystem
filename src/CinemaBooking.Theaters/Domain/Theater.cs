@@ -1,8 +1,7 @@
 namespace CinemaBooking.Theaters.Domain;
 
-public class Theater
+public class Theater : Entity
 {
-    public required Guid Id { get; set; }
     public required string Name { get; set; }
     public required SeatingArrangement SeatingArrangement { get; set; }
 }
