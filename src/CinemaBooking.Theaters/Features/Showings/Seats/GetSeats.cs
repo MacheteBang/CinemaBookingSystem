@@ -5,7 +5,7 @@ public static class GetSeats
     public class Query : IRequest<Result<List<Seat>>>
     {
         public required Guid ShowingId { get; set; }
-        public Seat.OccupancyState? Occupancy { get; set; }
+        public bool? IsAvailable { get; set; }
     }
 
     public class Validator : AbstractValidator<Query>
@@ -42,7 +42,7 @@ public static class GetSeats
             if (showing.Seats is null) return SeatError.NotFound;
 
             var filteredSeats = showing.Seats
-                .Where(s => request.Occupancy is null || s.Occupancy == request.Occupancy);
+                .Where(s => request.IsAvailable is null || request.IsAvailable == s.IsAvailable);
 
             return filteredSeats.ToList();
         }
@@ -53,12 +53,12 @@ public class GetSeatsEndpoint : IEndpoint
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("showings/{showingId:guid}/seats", async (Guid showingId, Seat.OccupancyState? occupancy, ISender sender) =>
+        app.MapGet("showings/{showingId:guid}/seats", async (Guid showingId, bool? isAvailable, ISender sender) =>
         {
             GetSeats.Query query = new()
             {
                 ShowingId = showingId,
-                Occupancy = occupancy
+                IsAvailable = isAvailable
             };
 
             var result = await sender.Send(query);

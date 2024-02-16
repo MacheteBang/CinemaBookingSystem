@@ -8,6 +8,8 @@ public static class SeatMapper
         {
             Id = seat.Id,
             Occupancy = seat.Occupancy,
+            OccupancyStateExpiration = seat.OccupancyStateExpiration,
+            IsAvailable = seat.IsAvailable,
             Row = seat.Row,
             Number = seat.Number
         };

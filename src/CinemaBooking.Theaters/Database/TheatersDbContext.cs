@@ -21,7 +21,7 @@ public class TheatersDbContext : DbContext
             .Property(s => s.Occupancy)
             .HasConversion(
                 e => e.ToString(),
-                e => Enum.Parse<Seat.OccupancyState>(e)
+                e => Enum.Parse<OccupancyState>(e)
             );
     }
 }

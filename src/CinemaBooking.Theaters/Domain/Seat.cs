@@ -7,11 +7,13 @@ public class Seat : Entity
     public required string Row { get; set; }
     public required ushort Number { get; set; }
 
+    public bool IsAvailable => Occupancy == OccupancyState.Vacant
+        && (OccupancyStateExpiration ?? DateTime.MinValue) < DateTime.UtcNow;
+
     public Result Reserve(ushort pendingTimeoutInSeconds)
     {
         if (Occupancy != OccupancyState.Vacant) return SeatError.InvalidAction;
 
-        Occupancy = OccupancyState.Pending;
         OccupancyStateExpiration = DateTime.UtcNow.AddSeconds(pendingTimeoutInSeconds);
 
         return Result.Success();
@@ -24,9 +26,9 @@ public class Seat : Entity
     }
     public Result Confirm()
     {
-        if (Occupancy != OccupancyState.Pending) return SeatError.InvalidAction;
+        if (Occupancy == OccupancyState.Vacant && OccupancyStateExpiration > DateTime.UtcNow) return SeatError.InvalidAction;
 
-        Occupancy = OccupancyState.Reserved;
+        Occupancy = OccupancyState.Confirmed;
         OccupancyStateExpiration = null;
 
         return Result.Success();

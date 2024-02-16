@@ -6,7 +6,7 @@ public class UpdateSeat
     {
         public required Guid ShowingId { get; set; }
         public required Guid Id { get; set; }
-        public required Seat.OccupancyAction Action { get; set; }
+        public required OccupancyAction Action { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -48,9 +48,9 @@ public class UpdateSeat
 
             var actionResult = request.Action switch
             {
-                Seat.OccupancyAction.Reserve => seat.Reserve(),
-                Seat.OccupancyAction.Release => seat.Release(),
-                Seat.OccupancyAction.Confirm => seat.Confirm(),
+                OccupancyAction.Reserve => seat.Reserve(300),
+                OccupancyAction.Release => seat.Release(),
+                OccupancyAction.Confirm => seat.Confirm(),
                 _ => SeatError.InvalidAction
             };
 
@@ -66,7 +66,7 @@ public class UpdateSeat
 
 public class UpdateSeatEndpoint : IEndpoint
 {
-    public record Request(Seat.OccupancyAction Action);
+    public record Request(OccupancyAction Action);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {

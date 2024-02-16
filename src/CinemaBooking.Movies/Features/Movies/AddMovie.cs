@@ -7,7 +7,7 @@ public static class AddMovie
         public required string Title { get; set; }
         public string? Description { get; set; }
         public TimeSpan? Duration { get; set; }
-        public ICollection<string>? Genres { get; set; }
+        public ICollection<Genre>? Genres { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -15,9 +15,9 @@ public static class AddMovie
         public Validator()
         {
             RuleFor(c => c.Title).NotEmpty();
-            RuleForEach(c => c.Genres)
-                .IsEnumName(typeof(Genre))
-                .WithMessage(MovieError.InvalidEnumTemplate);
+            // RuleForEach(c => c.Genres)
+            //     .IsEnumName(typeof(Genre))
+            //     .WithMessage(MovieError.InvalidEnumTemplate);
         }
     }
 
@@ -46,9 +46,7 @@ public static class AddMovie
                 Title = request.Title,
                 Description = request.Description,
                 Duration = request.Duration,
-                Genres = request.Genres?.Count == 0
-                    ? null
-                    : request.Genres?.Select(g => (Genre)Enum.Parse(typeof(Genre), g)).ToList()
+                Genres = request.Genres
             };
 
             await _dbContext.Movies.AddAsync(movie, cancellationToken);
@@ -61,11 +59,11 @@ public static class AddMovie
 
 public class AddMovieEndpoint : IEndpoint
 {
-    public record Request(string Title, string? Description, TimeSpan? Duration, ICollection<string>? Genres);
+    public record Request(string Title, string? Description, TimeSpan? Duration, List<Genre>? Genres);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("movies", async ([AsParameters] Request request, ISender sender) =>
+        app.MapPost("movies", async (Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
 
