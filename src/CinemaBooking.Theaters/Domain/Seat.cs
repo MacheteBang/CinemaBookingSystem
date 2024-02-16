@@ -31,18 +31,4 @@ public class Seat : Entity
 
         return Result.Success();
     }
-
-    public enum OccupancyState
-    {
-        Vacant,
-        Pending,
-        Reserved
-    }
-
-    public enum OccupancyAction
-    {
-        Reserve,
-        Release,
-        Confirm
-    }
 }
