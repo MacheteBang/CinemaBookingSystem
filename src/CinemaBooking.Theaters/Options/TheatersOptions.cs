@@ -30,4 +30,11 @@ public class TheatersOptions
     ///     created.
     /// </summary>
     public bool UseEndpoints { get; set; } = false;
+
+    /// <summary>
+    ///     Gets or sets the amount of time (in seconds) that a seat will
+    ///     remain in <see cref="Seat.OccupancyState.Pending" /> before
+    ///     it reverts back to <see cref="Seat.OccupancyState.Vacant"/>.
+    /// </summary>
+    public int PendingSeatReservationTimeoutInSeconds { get; set; } = 5;
 }
