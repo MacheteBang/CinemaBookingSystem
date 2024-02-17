@@ -55,7 +55,7 @@ public class GetTheaterEndpoint : IEndpoint
         {
             var result = await sender.Send(request.ToQuery());
 
-            return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
+            return result.IsSuccess ? Results.Ok(result.Value.ToResponse(false))
                 : result.Error.Code switch
                 {
                     TheaterError.Codes.NotFound => Results.NotFound(result.Error.Messages),
