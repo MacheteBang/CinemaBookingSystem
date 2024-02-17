@@ -47,13 +47,11 @@ public static class GetMovie
 
 public class GetMovieEndpoint : IEndpoint
 {
-    public record Request(Guid MovieId);
-
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("movies/{movieId:guid}", async (Guid movieId, ISender sender) =>
         {
-            var result = await sender.Send(new GetMovie.Query() { MovieId = movieId });
+            var result = await sender.Send(new GetMovie.Query { MovieId = movieId });
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.Ok(result.Value.ToResponse());

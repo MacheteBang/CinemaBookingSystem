@@ -31,13 +31,11 @@ public static class GetShowing
 
 public class GetShowingEndpoint : IEndpoint
 {
-    public record Request(Guid Id);
-
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("showings/{showingId:guid}", async (Guid showingId, ISender sender) =>
         {
-            var result = await sender.Send(new GetShowing.Query() { ShowingId = showingId });
+            var result = await sender.Send(new GetShowing.Query { ShowingId = showingId });
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.Ok(result.Value.ToResponse());

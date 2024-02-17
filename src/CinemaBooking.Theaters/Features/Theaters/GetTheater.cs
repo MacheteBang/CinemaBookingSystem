@@ -47,13 +47,11 @@ public static class GetTheater
 
 public class GetTheaterEndpoint : IEndpoint
 {
-    public record Request(Guid Id);
-
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapGet("theaters/{theaterId:guid}", async (Guid theaterId, ISender sender) =>
         {
-            var result = await sender.Send(new GetTheater.Query() { TheaterId = theaterId });
+            var result = await sender.Send(new GetTheater.Query { TheaterId = theaterId });
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.Ok(result.Value.ToResponse(false));

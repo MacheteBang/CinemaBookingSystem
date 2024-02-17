@@ -35,7 +35,7 @@ public class GetReservationsEndpoint : IEndpoint
             "showings/{showingId:guid}/reservations",
             async (Guid showingId, ISender sender) =>
             {
-                var result = await sender.Send(new GetReservations.Query() { ShowingId = showingId });
+                var result = await sender.Send(new GetReservations.Query { ShowingId = showingId });
                 if (result.IsFailure) return result.Error.ToResult();
 
                 return Results.Ok(result.Value.Select(r => r.ToResponse()));
