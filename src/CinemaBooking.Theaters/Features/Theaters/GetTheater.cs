@@ -4,14 +4,14 @@ public static class GetTheater
 {
     public class Query : IRequest<Result<Theater>>
     {
-        public required Guid Id { get; set; }
+        public required Guid TheaterId { get; set; }
     }
 
     public class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
-            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.TheaterId).NotEmpty();
         }
     }
 
@@ -35,7 +35,7 @@ public static class GetTheater
             }
 
             var theater = await _dbContext.Theaters
-                .Where(t => t.Id == request.Id)
+                .Where(t => t.Id == request.TheaterId)
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (theater is null) return TheaterError.NotFound;
@@ -51,9 +51,9 @@ public class GetTheaterEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("theaters/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
+        app.MapGet("theaters/{theaterId:guid}", async (Guid theaterId, ISender sender) =>
         {
-            var result = await sender.Send(request.ToQuery());
+            var result = await sender.Send(new GetTheater.Query() { TheaterId = theaterId });
 
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse(false))
                 : result.Error.Code switch
@@ -64,16 +64,5 @@ public class GetTheaterEndpoint : IEndpoint
         })
         .WithName(nameof(GetTheaterEndpoint))
         .WithTags("Theaters");
-    }
-}
-
-public static class GetTheaterMapper
-{
-    public static GetTheater.Query ToQuery(this GetTheaterEndpoint.Request request)
-    {
-        return new()
-        {
-            Id = request.Id
-        };
     }
 }

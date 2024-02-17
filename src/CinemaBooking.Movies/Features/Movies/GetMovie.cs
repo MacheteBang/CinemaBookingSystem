@@ -4,14 +4,14 @@ public static class GetMovie
 {
     public class Query : IRequest<Result<Movie>>
     {
-        public required Guid Id { get; set; }
+        public required Guid MovieId { get; set; }
     }
 
     public class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
-            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.MovieId).NotEmpty();
         }
     }
 
@@ -35,7 +35,7 @@ public static class GetMovie
             }
 
             var movie = await _dbContext.Movies
-                .Where(m => m.Id == request.Id)
+                .Where(m => m.Id == request.MovieId)
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (movie is null) return MovieError.NotFound;
@@ -47,13 +47,13 @@ public static class GetMovie
 
 public class GetMovieEndpoint : IEndpoint
 {
-    public record Request(Guid Id);
+    public record Request(Guid MovieId);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("movies/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
+        app.MapGet("movies/{movieId:guid}", async (Guid movieId, ISender sender) =>
         {
-            var result = await sender.Send(request.ToQuery());
+            var result = await sender.Send(new GetMovie.Query() { MovieId = movieId });
 
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
@@ -64,16 +64,5 @@ public class GetMovieEndpoint : IEndpoint
         })
         .WithName(nameof(GetMovieEndpoint))
         .WithTags("Movies");
-    }
-}
-
-public static class GetMovieMapper
-{
-    public static GetMovie.Query ToQuery(this GetMovieEndpoint.Request request)
-    {
-        return new()
-        {
-            Id = request.Id
-        };
     }
 }

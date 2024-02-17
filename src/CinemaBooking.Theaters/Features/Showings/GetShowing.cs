@@ -4,7 +4,7 @@ public static class GetShowing
 {
     public class Query : IRequest<Result<Showing>>
     {
-        public Guid Id { get; set; }
+        public Guid ShowingId { get; set; }
     }
 
     internal sealed class Handler : IRequestHandler<Query, Result<Showing>>
@@ -19,7 +19,7 @@ public static class GetShowing
         public async Task<Result<Showing>> Handle(Query request, CancellationToken cancellationToken)
         {
             var showing = await _dbContext.Showings
-                .Where(t => t.Id == request.Id)
+                .Where(t => t.Id == request.ShowingId)
                 .SingleOrDefaultAsync(cancellationToken);
 
             if (showing is null) return ShowingError.NotFound;
@@ -35,9 +35,9 @@ public class GetShowingEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("showings/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
+        app.MapGet("showings/{showingId:guid}", async (Guid showingId, ISender sender) =>
         {
-            var result = await sender.Send(request.ToQuery());
+            var result = await sender.Send(new GetShowing.Query() { ShowingId = showingId });
 
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
@@ -48,16 +48,5 @@ public class GetShowingEndpoint : IEndpoint
         })
         .WithName(nameof(GetShowingEndpoint))
         .WithTags("Showings");
-    }
-}
-
-public static class GetShowingMapper
-{
-    public static GetShowing.Query ToQuery(this GetShowingEndpoint.Request request)
-    {
-        return new()
-        {
-            Id = request.Id
-        };
     }
 }

@@ -51,12 +51,7 @@ public class GetSeatsEndpoint : IEndpoint
     {
         app.MapGet("theaters/{theaterId:guid}/seats", async (Guid theaterId, ISender sender) =>
         {
-            GetSeats.Query query = new()
-            {
-                TheaterId = theaterId
-            };
-
-            var result = await sender.Send(query);
+            var result = await sender.Send(new GetSeats.Query() { TheaterId = theaterId });
 
             return result.IsSuccess ? Results.Ok(result.Value.Select(s => s.ToResponse()))
                 : result.Error.Code switch

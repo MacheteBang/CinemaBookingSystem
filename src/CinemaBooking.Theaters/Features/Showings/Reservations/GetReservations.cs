@@ -44,6 +44,8 @@ public class GetReservationsEndpoint : IEndpoint
                         _ => Results.BadRequest()
                     };
             }
-        );
+        )
+        .WithName(nameof(GetReservationsEndpoint))
+        .WithTags("Showings");
     }
 }
