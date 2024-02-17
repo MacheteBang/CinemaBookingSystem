@@ -4,7 +4,7 @@ public static class UpdateMovie
 {
     public class Command : IRequest<Result>
     {
-        public required Guid Id { get; set; }
+        public required Guid MovieId { get; set; }
         public required string Title { get; set; }
         public string? Description { get; set; }
         public TimeSpan? Duration { get; set; }
@@ -15,7 +15,7 @@ public static class UpdateMovie
     {
         public Validator()
         {
-            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.MovieId).NotEmpty();
             RuleFor(c => c.Title).NotEmpty();
         }
     }
@@ -41,7 +41,7 @@ public static class UpdateMovie
 
             Movie movie = new()
             {
-                Id = request.Id,
+                Id = request.MovieId,
                 Title = request.Title,
                 Description = request.Description,
                 Duration = request.Duration,
@@ -67,9 +67,9 @@ public class UpdateMovieEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("movies/{id:guid}", async (Guid id, Request request, ISender sender) =>
+        app.MapPut("movies/{movieId:guid}", async (Guid movieId, Request request, ISender sender) =>
         {
-            var result = await sender.Send(request.ToCommand(id));
+            var result = await sender.Send(request.ToCommand(movieId));
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.Accepted();
@@ -81,11 +81,11 @@ public class UpdateMovieEndpoint : IEndpoint
 
 public static class UpdateMovieMapper
 {
-    public static UpdateMovie.Command ToCommand(this UpdateMovieEndpoint.Request request, Guid id)
+    public static UpdateMovie.Command ToCommand(this UpdateMovieEndpoint.Request request, Guid movieId)
     {
         return new()
         {
-            Id = id,
+            MovieId = movieId,
             Title = request.Title,
             Description = request.Description,
             Duration = request.Duration,

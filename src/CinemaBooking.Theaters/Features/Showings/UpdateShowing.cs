@@ -4,7 +4,7 @@ public static class UpdateShowing
 {
     public class Command : IRequest<Result>
     {
-        public required Guid Id { get; set; }
+        public required Guid ShowingId { get; set; }
         public required Guid TheaterId { get; set; }
         public required Guid MovieId { get; set; }
         public required DateTime Showtime { get; set; }
@@ -14,7 +14,7 @@ public static class UpdateShowing
     {
         public Validator()
         {
-            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.ShowingId).NotEmpty();
             RuleFor(c => c.TheaterId).NotEmpty();
             RuleFor(c => c.MovieId).NotEmpty();
             RuleFor(c => c.Showtime).NotEmpty();
@@ -41,7 +41,7 @@ public static class UpdateShowing
             }
 
             Showing? showing = await _dbContext.Showings
-                .SingleOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
+                .SingleOrDefaultAsync(s => s.Id == request.ShowingId, cancellationToken);
 
             if (showing is null) return ShowingError.NotFound;
 
@@ -67,9 +67,9 @@ public class UpdateShowingEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("showings/{id:guid}", async (Guid id, Request request, ISender sender) =>
+        app.MapPut("showings/{showingId:guid}", async (Guid showingId, Request request, ISender sender) =>
         {
-            var result = await sender.Send(request.ToCommand(id));
+            var result = await sender.Send(request.ToCommand(showingId));
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.Accepted();
@@ -81,11 +81,11 @@ public class UpdateShowingEndpoint : IEndpoint
 
 public static class UpdateShowingMapper
 {
-    public static UpdateShowing.Command ToCommand(this UpdateShowingEndpoint.Request request, Guid id)
+    public static UpdateShowing.Command ToCommand(this UpdateShowingEndpoint.Request request, Guid showingId)
     {
         return new()
         {
-            Id = id,
+            ShowingId = showingId,
             TheaterId = request.TheaterId,
             MovieId = request.MovieId,
             Showtime = request.ShowTime

@@ -4,7 +4,7 @@ public static class UpdateTheater
 {
     public class Command : IRequest<Result>
     {
-        public required Guid Id { get; set; }
+        public required Guid TheaterId { get; set; }
         public required string Name { get; set; }
         public string? SeatingArrangement { get; set; }
     }
@@ -13,7 +13,7 @@ public static class UpdateTheater
     {
         public Validator()
         {
-            RuleFor(c => c.Id).NotEmpty();
+            RuleFor(c => c.TheaterId).NotEmpty();
             RuleFor(c => c.Name).NotEmpty();
             RuleFor(c => c.SeatingArrangement).NotNull();
         }
@@ -39,7 +39,7 @@ public static class UpdateTheater
             }
 
             var theater = await _dbContext.Theaters
-                .SingleOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
+                .SingleOrDefaultAsync(t => t.Id == request.TheaterId, cancellationToken);
 
             if (theater is null) return TheaterError.NotFound;
 
@@ -70,9 +70,9 @@ public class UpdateTheaterEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("theaters/{id:guid}", async (Guid id, Request request, ISender sender) =>
+        app.MapPut("theaters/{theaterId:guid}", async (Guid theaterId, Request request, ISender sender) =>
         {
-            var result = await sender.Send(request.ToCommand(id));
+            var result = await sender.Send(request.ToCommand(theaterId));
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.Accepted();
@@ -84,11 +84,11 @@ public class UpdateTheaterEndpoint : IEndpoint
 
 public static class UpdateTheaterMapper
 {
-    public static UpdateTheater.Command ToCommand(this UpdateTheaterEndpoint.Request request, Guid id)
+    public static UpdateTheater.Command ToCommand(this UpdateTheaterEndpoint.Request request, Guid theaterId)
     {
         return new()
         {
-            Id = id,
+            TheaterId = theaterId,
             Name = request.Name,
             SeatingArrangement = request.SeatingArrangement
         };
