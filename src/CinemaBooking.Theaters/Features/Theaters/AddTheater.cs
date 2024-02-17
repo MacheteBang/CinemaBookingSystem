@@ -40,7 +40,9 @@ public static class AddTheater
             {
                 Id = Guid.NewGuid(),
                 Name = request.Name,
-                SeatingArrangement = SeatingArrangement.GetSeatingArrangement(request.SeatingArrangement)
+                Seats = SeatingArrangement
+                    .GetSeatingArrangement(request.SeatingArrangement)
+                    .CreateSeats()
             };
 
             await _dbContext.Theaters.AddAsync(theater, cancellationToken);

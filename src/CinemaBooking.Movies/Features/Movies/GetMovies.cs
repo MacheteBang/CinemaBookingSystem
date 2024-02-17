@@ -2,9 +2,9 @@ namespace CinemaBooking.Movies.Features.Movies;
 
 public static class GetMovies
 {
-    public class Query : IRequest<Result<ICollection<Movie>>> { }
+    public class Query : IRequest<Result<List<Movie>>> { }
 
-    internal sealed class Handler : IRequestHandler<Query, Result<ICollection<Movie>>>
+    internal sealed class Handler : IRequestHandler<Query, Result<List<Movie>>>
     {
         private readonly MoviesDbContext _dbContext;
 
@@ -13,7 +13,7 @@ public static class GetMovies
             _dbContext = dbContext;
         }
 
-        public async Task<Result<ICollection<Movie>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<Movie>>> Handle(Query request, CancellationToken cancellationToken)
         {
             var movies = await _dbContext.Movies
                 .ToListAsync(cancellationToken);

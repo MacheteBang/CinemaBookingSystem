@@ -2,11 +2,11 @@ namespace CinemaBooking.Movies.Features.Genres;
 
 public static class GetGenres
 {
-    public class Query : IRequest<Result<ICollection<string>>> { }
+    public class Query : IRequest<Result<List<string>>> { }
 
-    internal sealed class Handler : IRequestHandler<Query, Result<ICollection<string>>>
+    internal sealed class Handler : IRequestHandler<Query, Result<List<string>>>
     {
-        public async Task<Result<ICollection<string>>> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<Result<List<string>>> Handle(Query request, CancellationToken cancellationToken)
         {
             List<string> genres = Enum.GetValues(typeof(Genre))
                 .Cast<Genre>()

@@ -1,19 +1,19 @@
-namespace CinemaBooking.Theaters.Features.Showings.Seats;
+namespace CinemaBooking.Theaters.Features.Theaters.Seats;
 
 public static class GetSeat
 {
     public class Query : IRequest<Result<Seat>>
     {
-        public required Guid ShowingId { get; set; }
-        public required Guid Id { get; set; }
+        public required Guid TheaterId { get; set; }
+        public required Guid SeatId { get; set; }
     }
 
     public class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
-            RuleFor(c => c.Id).NotEmpty();
-            RuleFor(c => c.ShowingId).NotEmpty();
+            RuleFor(c => c.SeatId).NotEmpty();
+            RuleFor(c => c.TheaterId).NotEmpty();
         }
     }
 
@@ -36,14 +36,14 @@ public static class GetSeat
                 return SeatError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var showing = await _dbContext.Showings
-                .SingleOrDefaultAsync(sh => sh.Id == request.ShowingId);
+            var theater = await _dbContext.Theaters
+                .SingleOrDefaultAsync(sh => sh.Id == request.TheaterId);
 
-            if (showing is null) return SeatError.ShowingNotFound;
-            if (showing.Seats is null) return SeatError.NotFound;
+            if (theater is null) return SeatError.TheaterNotFound;
+            if (theater.Seats is null) return SeatError.NotFound;
 
-            var seat = showing.Seats
-                .SingleOrDefault(s => s.Id == request.Id);
+            var seat = theater.Seats
+                .SingleOrDefault(s => s.Id == request.SeatId);
 
             if (seat is null) return SeatError.NotFound;
 
@@ -56,19 +56,19 @@ public class GetSeatEndpoint : IEndpoint
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("showings/{showingId:guid}/seats/{id:guid}", async (Guid showingId, Guid id, ISender sender) =>
+        app.MapGet("theaters/{theaterId:guid}/seats/{seatId:guid}", async (Guid theaterId, Guid seatId, ISender sender) =>
         {
-            var result = await sender.Send(new GetSeat.Query { ShowingId = showingId, Id = id });
+            var result = await sender.Send(new GetSeat.Query { TheaterId = theaterId, SeatId = seatId });
 
             return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
                 : result.Error.Code switch
                 {
                     SeatError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    SeatError.Codes.ShowingNotFound => Results.NotFound(result.Error.Messages),
+                    SeatError.Codes.TheaterNotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })
         .WithName(nameof(GetSeatEndpoint))
-        .WithTags("Showings");
+        .WithTags("Theaters");
     }
 }

@@ -9,5 +9,5 @@ public class MovieResponse
 
     public TimeSpan? Duration { get; set; }
 
-    public ICollection<Genre>? Genres { get; set; }
+    public List<Genre>? Genres { get; set; }
 }

@@ -6,5 +6,4 @@ public class ShowingResponse
     public required Guid TheaterId { get; set; }
     public required Guid MovieId { get; set; }
     public required DateTime Showtime { get; set; }
-    public required Dictionary<bool, uint> SeatSummary { get; set; }
 }

@@ -8,7 +8,7 @@ public static class UpdateMovie
         public required string Title { get; set; }
         public string? Description { get; set; }
         public TimeSpan? Duration { get; set; }
-        public ICollection<string>? Genres { get; set; }
+        public List<Genre>? Genres { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -17,7 +17,6 @@ public static class UpdateMovie
         {
             RuleFor(c => c.Id).NotEmpty();
             RuleFor(c => c.Title).NotEmpty();
-            RuleForEach(c => c.Genres).IsEnumName(typeof(Genre)).WithMessage(MovieError.InvalidEnumTemplate);
         }
     }
 
@@ -46,9 +45,7 @@ public static class UpdateMovie
                 Title = request.Title,
                 Description = request.Description,
                 Duration = request.Duration,
-                Genres = request.Genres?.Count == 0
-                    ? null
-                    : request.Genres?.Select(g => (Genre)Enum.Parse(typeof(Genre), g)).ToList()
+                Genres = request.Genres
             };
 
             _dbContext.Movies.Update(movie);
@@ -65,9 +62,8 @@ public class UpdateMovieEndpoint : IEndpoint
         string Title,
         string? Description,
         TimeSpan? Duration,
-        ICollection<string>? Genres
+        List<Genre>? Genres
     );
-
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {

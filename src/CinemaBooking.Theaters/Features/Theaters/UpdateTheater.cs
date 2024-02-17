@@ -6,7 +6,7 @@ public static class UpdateTheater
     {
         public required Guid Id { get; set; }
         public required string Name { get; set; }
-        public required string SeatingArrangement { get; set; }
+        public string? SeatingArrangement { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -38,12 +38,19 @@ public static class UpdateTheater
                 return TheaterError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            Theater theater = new()
+            var theater = await _dbContext.Theaters
+                .SingleOrDefaultAsync(t => t.Id == request.Id, cancellationToken);
+
+            if (theater is null) return TheaterError.NotFound;
+
+            theater.Name = request.Name;
+
+            if (request.SeatingArrangement is not null)
             {
-                Id = request.Id,
-                Name = request.Name,
-                SeatingArrangement = request.SeatingArrangement
-            };
+                theater.Seats = SeatingArrangement
+                    .GetSeatingArrangement(request.SeatingArrangement)
+                    .CreateSeats();
+            }
 
             _dbContext.Theaters.Update(theater);
             await _dbContext.SaveChangesAsync(cancellationToken);

@@ -1,18 +1,17 @@
-namespace CinemaBooking.Theaters.Features.Showings.Seats;
+namespace CinemaBooking.Theaters.Features.Theaters.Seats;
 
 public static class GetSeats
 {
     public class Query : IRequest<Result<List<Seat>>>
     {
-        public required Guid ShowingId { get; set; }
-        public bool? IsAvailable { get; set; }
+        public required Guid TheaterId { get; set; }
     }
 
     public class Validator : AbstractValidator<Query>
     {
         public Validator()
         {
-            RuleFor(c => c.ShowingId).NotEmpty();
+            RuleFor(c => c.TheaterId).NotEmpty();
         }
     }
 
@@ -35,16 +34,13 @@ public static class GetSeats
                 return SeatError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var showing = await _dbContext.Showings
-                .SingleOrDefaultAsync(sh => sh.Id == request.ShowingId);
+            var theater = await _dbContext.Theaters
+                .SingleOrDefaultAsync(sh => sh.Id == request.TheaterId);
 
-            if (showing is null) return SeatError.ShowingNotFound;
-            if (showing.Seats is null) return SeatError.NotFound;
+            if (theater is null) return SeatError.TheaterNotFound;
+            if (theater.Seats is null) return SeatError.NotFound;
 
-            var filteredSeats = showing.Seats
-                .Where(s => request.IsAvailable is null || request.IsAvailable == s.IsAvailable);
-
-            return filteredSeats.ToList();
+            return theater.Seats;
         }
     }
 }
@@ -53,12 +49,11 @@ public class GetSeatsEndpoint : IEndpoint
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("showings/{showingId:guid}/seats", async (Guid showingId, bool? isAvailable, ISender sender) =>
+        app.MapGet("theaters/{theaterId:guid}/seats", async (Guid theaterId, ISender sender) =>
         {
             GetSeats.Query query = new()
             {
-                ShowingId = showingId,
-                IsAvailable = isAvailable
+                TheaterId = theaterId
             };
 
             var result = await sender.Send(query);
@@ -67,11 +62,11 @@ public class GetSeatsEndpoint : IEndpoint
                 : result.Error.Code switch
                 {
                     SeatError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    SeatError.Codes.ShowingNotFound => Results.NotFound(result.Error.Messages),
+                    SeatError.Codes.TheaterNotFound => Results.NotFound(result.Error.Messages),
                     _ => Results.BadRequest()
                 };
         })
         .WithName(nameof(GetSeatsEndpoint))
-        .WithTags("Showings");
+        .WithTags("Theaters");
     }
 }

@@ -10,18 +10,6 @@ public class TheatersDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Theater>()
-            .Property(t => t.SeatingArrangement)
-            .HasConversion(
-                h => h.Name,
-                h => SeatingArrangement.GetSeatingArrangement(h)
-            );
-
-        modelBuilder.Entity<Showing>()
-            .OwnsMany(s => s.Seats)
-            .Property(s => s.Occupancy)
-            .HasConversion(
-                e => e.ToString(),
-                e => Enum.Parse<OccupancyState>(e)
-            );
+            .OwnsMany(s => s.Seats);
     }
 }

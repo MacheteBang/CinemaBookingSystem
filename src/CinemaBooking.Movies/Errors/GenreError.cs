@@ -4,5 +4,5 @@ public sealed record GenreError(string Code, IEnumerable<string>? Messages = nul
 {
     public static implicit operator Result(GenreError error) => Result.Failure(error);
     public static implicit operator Result<string>(GenreError error) => Result.Failure<string>(error);
-    public static implicit operator Result<ICollection<string>>(GenreError error) => Result.Failure<ICollection<string>>(error);
+    public static implicit operator Result<List<string>>(GenreError error) => Result.Failure<List<string>>(error);
 }

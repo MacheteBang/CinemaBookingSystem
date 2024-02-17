@@ -46,8 +46,7 @@ public static class AddShowing
                 Id = Guid.NewGuid(),
                 MovieId = request.MovieId,
                 TheaterId = request.TheaterId,
-                Showtime = request.Showtime,
-                Seats = theater.SeatingArrangement.CreateSeats()
+                Showtime = request.Showtime
             };
 
             await _dbContext.Showings.AddAsync(showing, cancellationToken);
@@ -75,7 +74,7 @@ public class AddShowingEndpoint : IEndpoint
                     _ => Results.BadRequest()
                 };
         })
-        .WithName(nameof(AddShowing))
+        .WithName(nameof(AddShowingEndpoint))
         .WithTags("Showings");
     }
 }

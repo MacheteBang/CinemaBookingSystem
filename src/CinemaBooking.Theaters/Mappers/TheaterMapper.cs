@@ -8,7 +8,7 @@ public static class TheaterMapper
         {
             Id = theater.Id,
             Title = theater.Name,
-            SeatingArrangement = theater.SeatingArrangement
+            Seats = theater.Seats
         };
     }
 }

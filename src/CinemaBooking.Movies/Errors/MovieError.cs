@@ -13,5 +13,5 @@ public sealed record MovieError(string Code, IEnumerable<string>? Messages = nul
 
     public static implicit operator Result(MovieError error) => Result.Failure(error);
     public static implicit operator Result<Movie>(MovieError error) => Result.Failure<Movie>(error);
-    public static implicit operator Result<ICollection<Movie>>(MovieError error) => Result.Failure<ICollection<Movie>>(error);
+    public static implicit operator Result<List<Movie>>(MovieError error) => Result.Failure<List<Movie>>(error);
 }

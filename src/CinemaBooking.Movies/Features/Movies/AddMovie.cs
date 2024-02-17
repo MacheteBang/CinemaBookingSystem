@@ -7,7 +7,7 @@ public static class AddMovie
         public required string Title { get; set; }
         public string? Description { get; set; }
         public TimeSpan? Duration { get; set; }
-        public ICollection<Genre>? Genres { get; set; }
+        public List<Genre>? Genres { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -59,7 +59,12 @@ public static class AddMovie
 
 public class AddMovieEndpoint : IEndpoint
 {
-    public record Request(string Title, string? Description, TimeSpan? Duration, List<Genre>? Genres);
+    public record Request(
+        string Title,
+        string? Description,
+        TimeSpan? Duration,
+        List<Genre>? Genres
+    );
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {

@@ -7,9 +7,6 @@ public static class SeatMapper
         return new SeatResponse
         {
             Id = seat.Id,
-            Occupancy = seat.Occupancy,
-            OccupancyStateExpiration = seat.OccupancyStateExpiration,
-            IsAvailable = seat.IsAvailable,
             Row = seat.Row,
             Number = seat.Number
         };
