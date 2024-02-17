@@ -4,7 +4,7 @@ public static class RemoveShowing
 {
     public class Command : IRequest<Result>
     {
-        public required Guid Id { get; set; }
+        public required Guid ShowingId { get; set; }
     }
 
     internal sealed class Handler : IRequestHandler<Command, Result>
@@ -18,7 +18,7 @@ public static class RemoveShowing
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
-            IQueryable<Showing> getShowings() => _dbContext.Showings.Where(m => m.Id == request.Id);
+            IQueryable<Showing> getShowings() => _dbContext.Showings.Where(m => m.Id == request.ShowingId);
 
             if (_dbContext.Database.IsRelational())
             {
@@ -37,30 +37,16 @@ public static class RemoveShowing
 
 public class RemoveShowingEndpoint : IEndpoint
 {
-
-    public record Request(Guid Id);
-
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("showings/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
+        app.MapDelete("showings/{showingId:guid}", async (Guid showingId, ISender sender) =>
         {
-            var result = await sender.Send(request.ToCommand());
+            var result = await sender.Send(new RemoveShowing.Command { ShowingId = showingId });
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.NoContent();
         })
         .WithName(nameof(RemoveShowingEndpoint))
         .WithTags("Showings");
-    }
-}
-
-public static class RemoveShowingMapper
-{
-    public static RemoveShowing.Command ToCommand(this RemoveShowingEndpoint.Request request)
-    {
-        return new()
-        {
-            Id = request.Id
-        };
     }
 }

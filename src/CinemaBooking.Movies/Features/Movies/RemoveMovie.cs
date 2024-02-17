@@ -4,7 +4,7 @@ public static class RemoveMovie
 {
     public class Command : IRequest<Result>
     {
-        public required Guid Id { get; set; }
+        public required Guid MovieId { get; set; }
     }
 
     internal sealed class Handler : IRequestHandler<Command, Result>
@@ -18,7 +18,7 @@ public static class RemoveMovie
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
-            IQueryable<Movie> getMovies() => _dbContext.Movies.Where(m => m.Id == request.Id);
+            IQueryable<Movie> getMovies() => _dbContext.Movies.Where(m => m.Id == request.MovieId);
 
             if (_dbContext.Database.IsRelational())
             {
@@ -37,30 +37,16 @@ public static class RemoveMovie
 
 public class RemoveMovieEndpoint : IEndpoint
 {
-
-    public record Request(Guid Id);
-
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapDelete("movies/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
+        app.MapDelete("movies/{movieId:guid}", async (Guid movieId, ISender sender) =>
         {
-            var result = await sender.Send(request.ToCommand());
+            var result = await sender.Send(new RemoveMovie.Command { MovieId = movieId });
             if (result.IsFailure) return result.Error.ToResult();
 
             return Results.NoContent();
         })
         .WithName(nameof(RemoveMovieEndpoint))
         .WithTags("Movies");
-    }
-}
-
-public static class RemoveMovieMapper
-{
-    public static RemoveMovie.Command ToCommand(this RemoveMovieEndpoint.Request request)
-    {
-        return new()
-        {
-            Id = request.Id
-        };
     }
 }
