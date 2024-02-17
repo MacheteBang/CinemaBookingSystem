@@ -1,4 +1,4 @@
-namespace CinemaBooking.Showings.Features.Showings;
+namespace CinemaBooking.Theaters.Features.Showings;
 
 public static class RemoveShowing
 {
