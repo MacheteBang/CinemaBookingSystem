@@ -75,7 +75,7 @@ public class AddMovieEndpoint : IEndpoint
 
             return Results.CreatedAtRoute(
                 nameof(GetMovieEndpoint),
-                new { Id = result.Value },
+                new { MovieId = result.Value },
                 new { Id = result.Value }
             );
         })

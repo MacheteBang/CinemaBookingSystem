@@ -66,7 +66,7 @@ public class AddTheaterEndpoint : IEndpoint
 
             return Results.CreatedAtRoute(
                 nameof(GetTheaterEndpoint),
-                new { Id = result.Value },
+                new { TheaterId = result.Value },
                 new { Id = result.Value }
             );
         })

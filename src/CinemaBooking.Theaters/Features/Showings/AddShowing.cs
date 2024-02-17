@@ -70,7 +70,7 @@ public class AddShowingEndpoint : IEndpoint
 
             return Results.CreatedAtRoute(
                 nameof(GetShowingEndpoint),
-                new { Id = result.Value },
+                new { ShowingId = result.Value },
                 new { Id = result.Value }
             );
         })
