@@ -70,13 +70,9 @@ public class UpdateMovieEndpoint : IEndpoint
         app.MapPut("movies/{id:guid}", async (Guid id, Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand(id));
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Accepted()
-                : result.Error.Code switch
-                {
-                    MovieError.Codes.Invalid => Results.BadRequest(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Accepted();
         })
         .WithName(nameof(UpdateMovieEndpoint))
         .WithTags("Movies");

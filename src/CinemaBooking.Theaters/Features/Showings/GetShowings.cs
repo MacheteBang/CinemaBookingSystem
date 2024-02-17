@@ -32,13 +32,9 @@ public class GetShowingsEndpoint : IEndpoint
         app.MapGet("showings", async (ISender sender) =>
         {
             var result = await sender.Send(new GetShowings.Query());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Ok(result.Value.Select(t => t.ToResponse()))
-                : result.Error.Code switch
-                {
-                    ShowingError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Ok(result.Value.Select(t => t.ToResponse()));
         })
         .WithName(nameof(GetShowingsEndpoint))
         .WithTags("Showings");

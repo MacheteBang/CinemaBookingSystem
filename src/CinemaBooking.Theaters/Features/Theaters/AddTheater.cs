@@ -62,13 +62,13 @@ public class AddTheaterEndpoint : IEndpoint
         app.MapPost("theaters", async (Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetTheaterEndpoint), new { Id = result.Value }, new { Id = result.Value })
-                : result.Error.Code switch
-                {
-                    TheaterError.Codes.Invalid => Results.BadRequest(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.CreatedAtRoute(
+                nameof(GetTheaterEndpoint),
+                new { Id = result.Value },
+                new { Id = result.Value }
+            );
         })
         .WithName(nameof(AddTheaterEndpoint))
         .WithTags("Theaters");

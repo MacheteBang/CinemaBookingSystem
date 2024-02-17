@@ -54,13 +54,9 @@ public class GetTheaterEndpoint : IEndpoint
         app.MapGet("theaters/{theaterId:guid}", async (Guid theaterId, ISender sender) =>
         {
             var result = await sender.Send(new GetTheater.Query() { TheaterId = theaterId });
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Ok(result.Value.ToResponse(false))
-                : result.Error.Code switch
-                {
-                    TheaterError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Ok(result.Value.ToResponse(false));
         })
         .WithName(nameof(GetTheaterEndpoint))
         .WithTags("Theaters");

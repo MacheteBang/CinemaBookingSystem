@@ -4,8 +4,8 @@ public sealed record ReservationError(string Code, IEnumerable<string>? Messages
 {
     public static class Codes
     {
-        public const string Invalid = "Seat.Invalid";
-        public const string NotFound = "Seat.NotFound";
+        public const string Invalid = "Reservation.Invalid";
+        public const string NotFound = "Reservation.NotFound";
     }
 
     public static ReservationError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);

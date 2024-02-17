@@ -70,13 +70,9 @@ public class UpdateShowingEndpoint : IEndpoint
         app.MapPut("showings/{id:guid}", async (Guid id, Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand(id));
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Accepted()
-                : result.Error.Code switch
-                {
-                    ShowingError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Accepted();
         })
         .WithName(nameof(UpdateShowingEndpoint))
         .WithTags("Showings");

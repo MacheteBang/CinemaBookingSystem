@@ -36,13 +36,9 @@ public class GetReservationsEndpoint : IEndpoint
             async (Guid showingId, ISender sender) =>
             {
                 var result = await sender.Send(new GetReservations.Query() { ShowingId = showingId });
+                if (result.IsFailure) return result.Error.ToResult();
 
-                return result.IsSuccess ? Results.Ok(result.Value.Select(r => r.ToResponse()))
-                    : result.Error.Code switch
-                    {
-                        ReservationError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                        _ => Results.BadRequest()
-                    };
+                return Results.Ok(result.Value.Select(r => r.ToResponse()));
             }
         )
         .WithName(nameof(GetReservationsEndpoint))

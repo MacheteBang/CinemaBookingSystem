@@ -66,13 +66,13 @@ public class AddShowingEndpoint : IEndpoint
         app.MapPost("showings", async (Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetShowingEndpoint), new { Id = result.Value }, new { Id = result.Value })
-                : result.Error.Code switch
-                {
-                    ShowingError.Codes.InvalidTheater => Results.BadRequest(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.CreatedAtRoute(
+                nameof(GetShowingEndpoint),
+                new { Id = result.Value },
+                new { Id = result.Value }
+            );
         })
         .WithName(nameof(AddShowingEndpoint))
         .WithTags("Showings");

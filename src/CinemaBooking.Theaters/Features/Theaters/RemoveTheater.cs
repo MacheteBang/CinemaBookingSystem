@@ -45,12 +45,9 @@ public class RemoveTheaterEndpoint : IEndpoint
         app.MapDelete("theaters/{id:guid}", async ([AsParameters] Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.NoContent()
-                : result.Error.Code switch
-                {
-                    _ => Results.BadRequest()
-                };
+            return Results.NoContent();
         })
         .WithName(nameof(RemoveTheaterEndpoint))
         .WithTags("Theaters");

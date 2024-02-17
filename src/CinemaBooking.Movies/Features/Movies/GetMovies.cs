@@ -30,13 +30,9 @@ public class GetMoviesEndpoint : IEndpoint
         app.MapGet("movies", async (ISender sender) =>
         {
             var result = await sender.Send(new GetMovies.Query());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Ok(result.Value.Select(m => m.ToResponse()))
-                : result.Error.Code switch
-                {
-                    MovieError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Ok(result.Value.Select(m => m.ToResponse()));
         })
         .WithName(nameof(GetMoviesEndpoint))
         .WithTags("Movies");

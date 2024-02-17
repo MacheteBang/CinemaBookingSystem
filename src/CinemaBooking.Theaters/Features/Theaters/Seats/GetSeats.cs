@@ -52,14 +52,9 @@ public class GetSeatsEndpoint : IEndpoint
         app.MapGet("theaters/{theaterId:guid}/seats", async (Guid theaterId, ISender sender) =>
         {
             var result = await sender.Send(new GetSeats.Query() { TheaterId = theaterId });
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Ok(result.Value.Select(s => s.ToResponse()))
-                : result.Error.Code switch
-                {
-                    SeatError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    SeatError.Codes.TheaterNotFound => Results.NotFound(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Ok(result.Value.Select(s => s.ToResponse()));
         })
         .WithName(nameof(GetSeatsEndpoint))
         .WithTags("Theaters");

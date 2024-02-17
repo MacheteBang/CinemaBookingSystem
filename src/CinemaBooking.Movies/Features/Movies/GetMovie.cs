@@ -54,13 +54,9 @@ public class GetMovieEndpoint : IEndpoint
         app.MapGet("movies/{movieId:guid}", async (Guid movieId, ISender sender) =>
         {
             var result = await sender.Send(new GetMovie.Query() { MovieId = movieId });
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Ok(result.Value.ToResponse())
-                : result.Error.Code switch
-                {
-                    MovieError.Codes.NotFound => Results.NotFound(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.Ok(result.Value.ToResponse());
         })
         .WithName(nameof(GetMovieEndpoint))
         .WithTags("Movies");

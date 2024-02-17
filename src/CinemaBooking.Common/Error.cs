@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace CinemaBooking.Common;
 
 public record Error(string Code, IEnumerable<string>? Messages = null)
@@ -9,4 +11,11 @@ public record Error(string Code, IEnumerable<string>? Messages = null)
     public const string InvalidEnumTemplate = "'{PropertyValue}' is not a valid Genre.";
 
     public static implicit operator Result<Guid>(Error error) => Result<Guid>.Failure<Guid>(error);
+
+    public IResult ToResult()
+    {
+        if (Code.Contains("NotFound", StringComparison.InvariantCultureIgnoreCase)) return Results.NotFound(Messages);
+
+        return Results.BadRequest(Messages);
+    }
 }

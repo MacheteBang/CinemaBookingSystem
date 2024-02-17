@@ -25,12 +25,9 @@ public class GetGenresEndpoint : IEndpoint
         app.MapGet("genres", async (ISender sender) =>
         {
             var result = await sender.Send(new GetGenres.Query());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.Ok(result.Value)
-                : result.Error.Code switch
-                {
-                    _ => Results.BadRequest()
-                };
+            return Results.Ok(result.Value);
 
         })
         .WithName(nameof(GetGenresEndpoint))

@@ -71,13 +71,13 @@ public class AddMovieEndpoint : IEndpoint
         app.MapPost("movies", async (Request request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
+            if (result.IsFailure) return result.Error.ToResult();
 
-            return result.IsSuccess ? Results.CreatedAtRoute(nameof(GetMovieEndpoint), new { Id = result.Value }, new { Id = result.Value })
-                : result.Error.Code switch
-                {
-                    MovieError.Codes.Invalid => Results.BadRequest(result.Error.Messages),
-                    _ => Results.BadRequest()
-                };
+            return Results.CreatedAtRoute(
+                nameof(GetMovieEndpoint),
+                new { Id = result.Value },
+                new { Id = result.Value }
+            );
         })
         .WithName(nameof(AddMovieEndpoint))
         .WithTags("Movies");
