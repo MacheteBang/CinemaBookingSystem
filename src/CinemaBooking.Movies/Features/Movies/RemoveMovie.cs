@@ -20,6 +20,10 @@ public static class RemoveMovie
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
+            // Explicit validation not used as it is done when getting the Movie.
+            // If this changes to not get the Movie first, then validation needs
+            // to be introduced.
+
             var movieResult = await _mediator
                 .Send(new GetMovie.Query { MovieId = request.MovieId }, cancellationToken);
             if (movieResult.IsFailure) return movieResult.Error;

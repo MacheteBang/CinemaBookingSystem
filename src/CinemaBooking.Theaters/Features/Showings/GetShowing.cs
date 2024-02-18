@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore.Update.Internal;
+
 namespace CinemaBooking.Theaters.Features.Showings;
 
 public static class GetShowing
@@ -7,17 +9,33 @@ public static class GetShowing
         public Guid ShowingId { get; set; }
     }
 
+    public class Validator : AbstractValidator<Query>
+    {
+        public Validator()
+        {
+            RuleFor(c => c.ShowingId).NotEmpty();
+        }
+    }
+
     internal sealed class Handler : IRequestHandler<Query, Result<Showing>>
     {
+        private readonly IValidator<Query> _validator;
         private readonly TheatersDbContext _dbContext;
 
-        public Handler(TheatersDbContext dbContext)
+        public Handler(IValidator<Query> validator, TheatersDbContext dbContext)
         {
+            _validator = validator;
             _dbContext = dbContext;
         }
 
         public async Task<Result<Showing>> Handle(Query request, CancellationToken cancellationToken)
         {
+            ValidationResult validationResult = _validator.Validate(request);
+            if (!validationResult.IsValid)
+            {
+                return ShowingError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
+            }
+
             var showing = await _dbContext.Showings
                 .SingleOrDefaultAsync(t => t.Id == request.ShowingId, cancellationToken);
 

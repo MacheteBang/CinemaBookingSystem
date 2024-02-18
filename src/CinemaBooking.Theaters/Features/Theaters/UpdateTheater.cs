@@ -6,7 +6,6 @@ public static class UpdateTheater
     {
         public required Guid TheaterId { get; set; }
         public required string Name { get; set; }
-        public string? SeatingArrangement { get; set; }
     }
 
     public class Validator : AbstractValidator<Command>
@@ -15,7 +14,6 @@ public static class UpdateTheater
         {
             RuleFor(c => c.TheaterId).NotEmpty();
             RuleFor(c => c.Name).NotEmpty();
-            RuleFor(c => c.SeatingArrangement).NotNull();
         }
     }
 
@@ -61,8 +59,7 @@ public static class UpdateTheater
 public class UpdateTheaterEndpoint : IEndpoint
 {
     public record Request(
-        string Name,
-        string SeatingArrangement
+        string Name
     );
 
 
@@ -87,8 +84,7 @@ public static class UpdateTheaterMapper
         return new()
         {
             TheaterId = theaterId,
-            Name = request.Name,
-            SeatingArrangement = request.SeatingArrangement
+            Name = request.Name
         };
     }
 }

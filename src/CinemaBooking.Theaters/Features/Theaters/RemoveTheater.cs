@@ -20,6 +20,10 @@ public static class RemoveTheater
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
+            // Explicit validation not used as it is done when getting the Theater.
+            // If this changes to not get the Theater first, then validation needs
+            // to be introduced.
+
             var theaterResult = await _mediator
                 .Send(new GetTheater.Query { TheaterId = request.TheaterId }, cancellationToken);
             if (theaterResult.IsFailure) return theaterResult.Error;

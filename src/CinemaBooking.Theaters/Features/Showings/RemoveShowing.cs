@@ -20,6 +20,10 @@ public static class RemoveShowing
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
+            // Explicit validation not used as it is done when getting the Showing.
+            // If this changes to not get the Showing first, then validation needs
+            // to be introduced.
+
             var showingResult = await _mediator
                 .Send(new GetShowing.Query { ShowingId = request.ShowingId }, cancellationToken);
             if (showingResult.IsFailure) return showingResult.Error;
