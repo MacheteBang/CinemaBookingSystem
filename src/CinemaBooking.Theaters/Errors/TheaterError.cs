@@ -9,7 +9,7 @@ public sealed record TheaterError(string Code, IEnumerable<string>? Messages = n
     }
 
     public static TheaterError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
-    public static readonly TheaterError NotFound = new(Codes.NotFound, ["No theaters found."]);
+    public static readonly TheaterError NotFound = new(Codes.NotFound, ["No Theater exists with that Id."]);
 
     public static implicit operator Result(TheaterError error) => Result.Failure(error);
     public static implicit operator Result<Theater>(TheaterError error) => Result.Failure<Theater>(error);

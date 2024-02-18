@@ -10,25 +10,23 @@ public static class RemoveMovie
     internal sealed class Handler : IRequestHandler<Command, Result>
     {
         public readonly MoviesDbContext _dbContext;
+        public readonly IMediator _mediator;
 
-        public Handler(MoviesDbContext dbContext)
+        public Handler(MoviesDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
-            IQueryable<Movie> getMovies() => _dbContext.Movies.Where(m => m.Id == request.MovieId);
+            var movieResult = await _mediator
+                .Send(new GetMovie.Query { MovieId = request.MovieId }, cancellationToken);
+            if (movieResult.IsFailure) return movieResult.Error;
+            var movie = movieResult.Value;
 
-            if (_dbContext.Database.IsRelational())
-            {
-                await getMovies().ExecuteDeleteAsync(cancellationToken);
-            }
-            else
-            {
-                _dbContext.RemoveRange(getMovies());
-                await _dbContext.SaveChangesAsync(cancellationToken);
-            }
+            _dbContext.Remove(movie);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

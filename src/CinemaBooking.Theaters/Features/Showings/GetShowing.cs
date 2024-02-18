@@ -19,8 +19,7 @@ public static class GetShowing
         public async Task<Result<Showing>> Handle(Query request, CancellationToken cancellationToken)
         {
             var showing = await _dbContext.Showings
-                .Where(t => t.Id == request.ShowingId)
-                .SingleOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(t => t.Id == request.ShowingId, cancellationToken);
 
             if (showing is null) return ShowingError.NotFound;
 

@@ -18,7 +18,7 @@ public static class GetMovies
             var movies = await _dbContext.Movies
                 .ToListAsync(cancellationToken);
 
-            return movies;
+            return movies ?? [];
         }
     }
 }

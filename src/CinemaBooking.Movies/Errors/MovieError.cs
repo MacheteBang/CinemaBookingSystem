@@ -9,7 +9,7 @@ public sealed record MovieError(string Code, IEnumerable<string>? Messages = nul
     }
 
     public static MovieError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
-    public static readonly MovieError NotFound = new(Codes.NotFound, ["No movies found."]);
+    public static readonly MovieError NotFound = new(Codes.NotFound, ["No Movie exists with that Id."]);
 
     public static implicit operator Result(MovieError error) => Result.Failure(error);
     public static implicit operator Result<Movie>(MovieError error) => Result.Failure<Movie>(error);

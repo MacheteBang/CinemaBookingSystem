@@ -25,11 +25,13 @@ public static class UpdateShowing
     {
         public readonly IValidator<Command> _validator;
         private readonly TheatersDbContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public Handler(IValidator<Command> validator, TheatersDbContext dbContext)
+        public Handler(IValidator<Command> validator, TheatersDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
             _validator = validator;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
@@ -40,11 +42,12 @@ public static class UpdateShowing
                 return ShowingError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            Showing? showing = await _dbContext.Showings
-                .SingleOrDefaultAsync(s => s.Id == request.ShowingId, cancellationToken);
+            var showingResult = await _mediator
+                .Send(new GetShowing.Query { ShowingId = request.ShowingId }, cancellationToken);
+            if (showingResult.IsFailure) return showingResult.Error;
+            var showing = showingResult.Value;
 
-            if (showing is null) return ShowingError.NotFound;
-
+            // Reservations associated with a Showing are purposely not updated here.
             showing.TheaterId = request.TheaterId;
             showing.MovieId = request.MovieId;
             showing.Showtime = request.Showtime;

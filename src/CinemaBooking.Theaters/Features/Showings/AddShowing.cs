@@ -1,3 +1,5 @@
+using CinemaBooking.Theaters.Features.Theaters;
+
 namespace CinemaBooking.Theaters.Features.Showings;
 
 public static class AddShowing
@@ -23,11 +25,13 @@ public static class AddShowing
     {
         public readonly IValidator<Command> _validator;
         public readonly TheatersDbContext _dbContext;
+        public readonly IMediator _mediator;
 
-        public Handler(IValidator<Command> validator, TheatersDbContext dbContext)
+        public Handler(IValidator<Command> validator, TheatersDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
             _validator = validator;
+            _mediator = mediator;
         }
 
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
@@ -38,8 +42,12 @@ public static class AddShowing
                 return ShowingError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var theater = await _dbContext.Theaters.SingleOrDefaultAsync(t => t.Id == request.TheaterId, cancellationToken);
-            if (theater is null) return ShowingError.InvalidTheather;
+            var theaterResult = await _mediator
+                .Send(new GetTheater.Query { TheaterId = request.TheaterId }, cancellationToken);
+            if (theaterResult.IsFailure) return theaterResult.Error;
+            var theater = theaterResult.Value;
+
+            // TODO: Validate the MovieID from another service
 
             Showing showing = new()
             {

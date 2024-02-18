@@ -10,8 +10,7 @@ public sealed record ShowingError(string Code, IEnumerable<string>? Messages = n
     }
 
     public static ShowingError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
-    public static readonly ShowingError NotFound = new(Codes.NotFound, ["No showtimes found."]);
-    public static readonly ShowingError InvalidTheather = new(Codes.InvalidTheater, ["No theaters found with that Id"]);
+    public static readonly ShowingError NotFound = new(Codes.NotFound, ["No showing exists with that Id."]);
 
     public static implicit operator Result(ShowingError error) => Result.Failure(error);
     public static implicit operator Result<Showing>(ShowingError error) => Result.Failure<Showing>(error);

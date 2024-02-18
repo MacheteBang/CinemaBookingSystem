@@ -25,13 +25,13 @@ public static class AddReservation
     {
         public readonly IValidator<Command> _validator;
         public readonly TheatersDbContext _dbContext;
-        public readonly IMediator _mediatr;
+        public readonly IMediator _mediator;
 
-        public Handler(IValidator<Command> validator, TheatersDbContext dbContext, IMediator mediatr)
+        public Handler(IValidator<Command> validator, TheatersDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
             _validator = validator;
-            _mediatr = mediatr;
+            _mediator = mediator;
         }
 
         public async Task<Result<Guid>> Handle(Command request, CancellationToken cancellationToken)
@@ -43,12 +43,12 @@ public static class AddReservation
             }
 
             var showingQuery = new GetShowing.Query() { ShowingId = request.ShowingId };
-            var showingResult = await _mediatr.Send(showingQuery, cancellationToken);
+            var showingResult = await _mediator.Send(showingQuery, cancellationToken);
             if (showingResult.IsFailure) return showingResult.Error;
             var showing = showingResult.Value;
 
             var seatQuery = new GetSeat.Query() { TheaterId = showing.TheaterId, SeatId = request.SeatId };
-            var seatResult = await _mediatr.Send(seatQuery, cancellationToken);
+            var seatResult = await _mediator.Send(seatQuery, cancellationToken);
             if (seatResult.IsFailure) return seatResult.Error;
             var seat = seatResult.Value;
 

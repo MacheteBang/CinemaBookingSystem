@@ -18,9 +18,7 @@ public static class GetTheaters
             var theaters = await _dbContext.Theaters
                 .ToListAsync(cancellationToken);
 
-            if (theaters is null) return TheaterError.NotFound;
-
-            return theaters;
+            return theaters ?? [];
         }
     }
 }

@@ -23,11 +23,13 @@ public static class UpdateTheater
     {
         private readonly IValidator<Command> _validator;
         private readonly TheatersDbContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public Handler(IValidator<Command> validator, TheatersDbContext dbContext)
+        public Handler(IValidator<Command> validator, TheatersDbContext dbContext, IMediator mediator)
         {
             _validator = validator;
             _dbContext = dbContext;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
@@ -38,19 +40,15 @@ public static class UpdateTheater
                 return TheaterError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var theater = await _dbContext.Theaters
-                .SingleOrDefaultAsync(t => t.Id == request.TheaterId, cancellationToken);
-
-            if (theater is null) return TheaterError.NotFound;
+            var theaterResult = await _mediator
+                .Send(new GetTheater.Query { TheaterId = request.TheaterId }, cancellationToken);
+            if (theaterResult.IsFailure) return theaterResult.Error;
+            var theater = theaterResult.Value;
 
             theater.Name = request.Name;
-
-            if (request.SeatingArrangement is not null)
-            {
-                theater.Seats = SeatingArrangement
-                    .GetSeatingArrangement(request.SeatingArrangement)
-                    .CreateSeats();
-            }
+            // Because seats are tied to reservations, changing them will require
+            // updating those reservations.
+            // TODO: Handle SeatingArrangement changes inconsideration of Reservations
 
             _dbContext.Theaters.Update(theater);
             await _dbContext.SaveChangesAsync(cancellationToken);

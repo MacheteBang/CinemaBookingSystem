@@ -10,25 +10,23 @@ public static class RemoveShowing
     internal sealed class Handler : IRequestHandler<Command, Result>
     {
         public readonly TheatersDbContext _dbContext;
+        public readonly IMediator _mediator;
 
-        public Handler(TheatersDbContext dbContext)
+        public Handler(TheatersDbContext dbContext, IMediator mediator)
         {
             _dbContext = dbContext;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(Command request, CancellationToken cancellationToken)
         {
-            IQueryable<Showing> getShowings() => _dbContext.Showings.Where(m => m.Id == request.ShowingId);
+            var showingResult = await _mediator
+                .Send(new GetShowing.Query { ShowingId = request.ShowingId }, cancellationToken);
+            if (showingResult.IsFailure) return showingResult.Error;
+            var showing = showingResult.Value;
 
-            if (_dbContext.Database.IsRelational())
-            {
-                await getShowings().ExecuteDeleteAsync(cancellationToken);
-            }
-            else
-            {
-                _dbContext.RemoveRange(getShowings());
-                await _dbContext.SaveChangesAsync(cancellationToken);
-            }
+            _dbContext.Remove(showing);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

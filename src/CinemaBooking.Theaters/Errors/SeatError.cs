@@ -10,8 +10,7 @@ public sealed record SeatError(string Code, IEnumerable<string>? Messages = null
     }
 
     public static SeatError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
-    public static readonly SeatError NotFound = new(Codes.NotFound, ["No seats found."]);
-    public static readonly SeatError TheaterNotFound = new(Codes.TheaterNotFound, ["No theaters found with that Id."]);
+    public static readonly SeatError NotFound = new(Codes.NotFound, ["No Seat exists with that Id."]);
 
     public static implicit operator Result(SeatError error) => Result.Failure(error);
     public static implicit operator Result<Seat>(SeatError error) => Result.Failure<Seat>(error);

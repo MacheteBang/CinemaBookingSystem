@@ -18,9 +18,7 @@ public static class GetShowings
             var showings = await _dbContext.Showings
                 .ToListAsync(cancellationToken);
 
-            if (showings is null) return ShowingError.NotFound;
-
-            return showings;
+            return showings ?? [];
         }
     }
 }

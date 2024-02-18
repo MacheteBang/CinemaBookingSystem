@@ -20,12 +20,12 @@ public static class GetSeat
     internal sealed class Handler : IRequestHandler<Query, Result<Seat>>
     {
         private readonly IValidator<Query> _validator;
-        private readonly TheatersDbContext _dbContext;
+        private readonly IMediator _mediator;
 
-        public Handler(IValidator<Query> validator, TheatersDbContext dbContext)
+        public Handler(IValidator<Query> validator, IMediator mediator)
         {
             _validator = validator;
-            _dbContext = dbContext;
+            _mediator = mediator;
         }
 
         public async Task<Result<Seat>> Handle(Query request, CancellationToken cancellationToken)
@@ -36,10 +36,11 @@ public static class GetSeat
                 return SeatError.Validation(validationResult.Errors.Select(e => e.ErrorMessage));
             }
 
-            var theater = await _dbContext.Theaters
-                .SingleOrDefaultAsync(sh => sh.Id == request.TheaterId);
+            var theaterResult = await _mediator
+                .Send(new GetTheater.Query { TheaterId = request.TheaterId }, cancellationToken);
+            if (theaterResult.IsFailure) return (SeatError)theaterResult.Error;
+            var theater = theaterResult.Value;
 
-            if (theater is null) return SeatError.TheaterNotFound;
             if (theater.Seats is null) return SeatError.NotFound;
 
             var seat = theater.Seats

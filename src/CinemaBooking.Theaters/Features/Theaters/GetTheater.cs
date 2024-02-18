@@ -35,8 +35,7 @@ public static class GetTheater
             }
 
             var theater = await _dbContext.Theaters
-                .Where(t => t.Id == request.TheaterId)
-                .SingleOrDefaultAsync(cancellationToken);
+                .SingleOrDefaultAsync(t => t.Id == request.TheaterId, cancellationToken);
 
             if (theater is null) return TheaterError.NotFound;
 
