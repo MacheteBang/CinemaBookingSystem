@@ -1,5 +1,4 @@
-
-using System.ComponentModel;
+using CinemaBooking.Theaters.Features.Theaters.Reservations;
 using CinemaBooking.Theaters.Features.Theaters.Seats;
 
 namespace CinemaBooking.Theaters.Features.Showings.Reservations;
@@ -84,7 +83,11 @@ public class AddReservationEndpoint : IEndpoint
                 var result = await sender.Send(request.ToCommand(showingId));
                 if (result.IsFailure) return result.Error.ToResult();
 
-                return Results.Ok(result.Value); // TODO: Change to CreatedAtRoute
+                return Results.CreatedAtRoute(
+                    nameof(GetReservationEndpoint),
+                    new { ShowingId = showingId, reservationId = result.Value },
+                    new { Id = result.Value }
+                );
             }
         )
         .WithName(nameof(AddReservationEndpoint))
