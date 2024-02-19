@@ -13,6 +13,13 @@ public class TheatersDbContext : DbContext
             .OwnsMany(s => s.Seats);
 
         modelBuilder.Entity<Showing>()
-            .OwnsMany(s => s.Reservations);
+            .OwnsMany(s => s.Reservations, r =>
+            { // Enforce a Unique Constraint on one seat per Showing
+                r.Property<Guid>("ShowingId");
+                r.WithOwner().HasForeignKey("ShowingId");
+                r.HasIndex("SeatId", "ShowingId").IsUnique();
+            }
+
+            );
     }
 }
