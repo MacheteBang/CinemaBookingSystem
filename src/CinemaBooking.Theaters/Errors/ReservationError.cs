@@ -1,6 +1,6 @@
 namespace CinemaBooking.Theaters.Errors;
 
-public sealed record ReservationError(string Code, IEnumerable<string>? Messages = null) : Error(Code, Messages)
+public static class ReservationError
 {
     public static class Codes
     {
@@ -8,10 +8,6 @@ public sealed record ReservationError(string Code, IEnumerable<string>? Messages
         public const string NotFound = "Reservation.NotFound";
     }
 
-    public static ReservationError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
-    public static readonly ReservationError NotFound = new(Codes.NotFound, ["Reservation not found."]);
-
-    public static implicit operator Result(ReservationError error) => Result.Failure(error);
-    public static implicit operator Result<Reservation>(ReservationError error) => Result.Failure<Reservation>(error);
-    public static implicit operator Result<List<Reservation>>(ReservationError error) => Result.Failure<List<Reservation>>(error);
+    public static Error Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
+    public static readonly Error NotFound = new(Codes.NotFound, ["No Reservation exists with that Id."]);
 }

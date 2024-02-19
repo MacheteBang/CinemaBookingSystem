@@ -1,18 +1,13 @@
 namespace CinemaBooking.Theaters.Errors;
 
-public sealed record SeatError(string Code, IEnumerable<string>? Messages = null) : Error(Code, Messages)
+public static class SeatError
 {
     public static class Codes
     {
         public const string Invalid = "Seat.Invalid";
         public const string NotFound = "Seat.NotFound";
-        public const string TheaterNotFound = "Seat.TheaterNotFound";
     }
 
-    public static SeatError Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
-    public static readonly SeatError NotFound = new(Codes.NotFound, ["No Seat exists with that Id."]);
-
-    public static implicit operator Result(SeatError error) => Result.Failure(error);
-    public static implicit operator Result<Seat>(SeatError error) => Result.Failure<Seat>(error);
-    public static implicit operator Result<List<Seat>>(SeatError error) => Result.Failure<List<Seat>>(error);
+    public static Error Validation(IEnumerable<string> errors) => new(Codes.Invalid, errors);
+    public static readonly Error NotFound = new(Codes.NotFound, ["No Seat exists with that Id."]);
 }

@@ -35,7 +35,7 @@ public static class GetSeats
             }
 
             var theaterResult = await _mediator.Send(new GetTheater.Query { TheaterId = request.TheaterId }, cancellationToken);
-            if (theaterResult.IsFailure) return (SeatError)theaterResult.Error;
+            if (theaterResult.IsFailure) return theaterResult.Error;
             var theater = theaterResult.Value;
 
             return theater.Seats ?? [];

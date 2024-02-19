@@ -6,11 +6,13 @@ public class TheatersDbContext : DbContext
 
     public DbSet<Theater> Theaters { get; set; }
     public DbSet<Showing> Showings { get; set; }
-    public DbSet<Reservation> Reservations { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Theater>()
             .OwnsMany(s => s.Seats);
+
+        modelBuilder.Entity<Showing>()
+            .OwnsMany(s => s.Reservations);
     }
 }

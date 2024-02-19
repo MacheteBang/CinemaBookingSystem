@@ -38,7 +38,7 @@ public static class GetSeat
 
             var theaterResult = await _mediator
                 .Send(new GetTheater.Query { TheaterId = request.TheaterId }, cancellationToken);
-            if (theaterResult.IsFailure) return (SeatError)theaterResult.Error;
+            if (theaterResult.IsFailure) return theaterResult.Error;
             var theater = theaterResult.Value;
 
             if (theater.Seats is null) return SeatError.NotFound;

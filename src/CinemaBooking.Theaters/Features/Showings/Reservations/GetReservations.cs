@@ -23,13 +23,10 @@ public static class GetReservations
             // Validate that the Showing exists. If not, an error should be returned.
             var showingResult = await _mediator
                 .Send(new GetShowing.Query { ShowingId = request.ShowingId }, cancellationToken);
-            if (showingResult.IsFailure) return (ReservationError)showingResult.Error; ;
+            if (showingResult.IsFailure) return showingResult.Error;
+            var showing = showingResult.Value;
 
-            var reservations = await _dbContext.Reservations
-                .Where(r => r.ShowingId == request.ShowingId)
-                .ToListAsync(cancellationToken);
-
-            return reservations ?? [];
+            return showing.Reservations ?? [];
         }
     }
 }

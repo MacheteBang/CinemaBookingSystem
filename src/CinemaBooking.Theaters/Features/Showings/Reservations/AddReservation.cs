@@ -58,14 +58,15 @@ public static class AddReservation
             Reservation reservation = new()
             {
                 Id = Guid.NewGuid(),
-                ShowingId = request.ShowingId,
                 SeatId = request.SeatId
             };
 
-            _dbContext.Reservations.Add(reservation);
+            showing.Reservations ??= [];
+            showing.Reservations.Add(reservation);
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return ShowingError.NotFound;
+            return reservation.Id;
         }
     }
 }
@@ -83,7 +84,7 @@ public class AddReservationEndpoint : IEndpoint
                 var result = await sender.Send(request.ToCommand(showingId));
                 if (result.IsFailure) return result.Error.ToResult();
 
-                return Results.Ok(); // TODO: Change to CreatedAtRoute
+                return Results.Ok(result.Value); // TODO: Change to CreatedAtRoute
             }
         )
         .WithName(nameof(AddReservationEndpoint))

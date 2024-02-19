@@ -7,7 +7,6 @@ public static class ReservationMapper
         return new ReservationResponse
         {
             Id = reservation.Id,
-            ShowingId = reservation.ShowingId,
             SeatId = reservation.SeatId
         };
     }
