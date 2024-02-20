@@ -51,13 +51,17 @@ public static class AddReservation
             if (seatResult.IsFailure) return seatResult.Error;
             var seat = seatResult.Value;
 
-            // TODO: Add logic to confirm one seat reservation per showing.
-            // TODO: Add logic to mark a seat as pending.
+            var anyBlockingReservations = (showing.Reservations ?? [])
+                .Any(r => r.SeatId == request.SeatId && r.IsActive());
+
+            if (anyBlockingReservations) return SeatError.Unavailable;
 
             Reservation reservation = new()
             {
                 Id = Guid.NewGuid(),
-                SeatId = request.SeatId
+                SeatId = request.SeatId,
+                State = ReservationState.Pending,
+                PendingExpiresOn = DateTime.UtcNow.AddSeconds(300)
             };
 
             showing.Reservations ??= [];

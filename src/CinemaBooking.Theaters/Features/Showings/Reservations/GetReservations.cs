@@ -26,7 +26,9 @@ public static class GetReservations
             if (showingResult.IsFailure) return showingResult.Error;
             var showing = showingResult.Value;
 
-            return showing.Reservations ?? [];
+            return (showing.Reservations ?? [])
+                .Where(r => r.IsActive())
+                .ToList();
         }
     }
 }

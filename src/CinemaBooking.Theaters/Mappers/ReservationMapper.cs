@@ -7,7 +7,9 @@ public static class ReservationMapper
         return new ReservationResponse
         {
             Id = reservation.Id,
-            SeatId = reservation.SeatId
+            SeatId = reservation.SeatId,
+            State = reservation.State,
+            PendingExpiresOn = reservation.PendingExpiresOn
         };
     }
 }
