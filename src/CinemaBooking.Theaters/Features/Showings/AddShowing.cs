@@ -67,11 +67,11 @@ public static class AddShowing
 
 public class AddShowingEndpoint : IEndpoint
 {
-    public record Request(Guid MovieId, Guid TheaterId, DateTime ShowTime);
+    public record AddShowingRequest(Guid MovieId, Guid TheaterId, DateTime ShowTime);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("showings", async (Request request, ISender sender) =>
+        app.MapPost("showings", async (AddShowingRequest request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
             if (result.IsFailure) return result.Error.ToResult();
@@ -89,7 +89,7 @@ public class AddShowingEndpoint : IEndpoint
 
 public static class AddShowingMapper
 {
-    public static AddShowing.Command ToCommand(this AddShowingEndpoint.Request request)
+    public static AddShowing.Command ToCommand(this AddShowingEndpoint.AddShowingRequest request)
     {
         return new()
         {

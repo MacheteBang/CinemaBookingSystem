@@ -58,7 +58,7 @@ public static class UpdateMovie
 
 public class UpdateMovieEndpoint : IEndpoint
 {
-    public record Request(
+    public record UpdateMovieRequest(
         string Title,
         string? Description,
         TimeSpan? Duration,
@@ -67,7 +67,7 @@ public class UpdateMovieEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("movies/{movieId:guid}", async (Guid movieId, Request request, ISender sender) =>
+        app.MapPut("movies/{movieId:guid}", async (Guid movieId, UpdateMovieRequest request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand(movieId));
             if (result.IsFailure) return result.Error.ToResult();
@@ -81,7 +81,7 @@ public class UpdateMovieEndpoint : IEndpoint
 
 public static class UpdateMovieMapper
 {
-    public static UpdateMovie.Command ToCommand(this UpdateMovieEndpoint.Request request, Guid movieId)
+    public static UpdateMovie.Command ToCommand(this UpdateMovieEndpoint.UpdateMovieRequest request, Guid movieId)
     {
         return new()
         {

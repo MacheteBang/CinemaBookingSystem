@@ -62,7 +62,7 @@ public static class UpdateShowing
 
 public class UpdateShowingEndpoint : IEndpoint
 {
-    public record Request(
+    public record UpdateShowingRequest(
         Guid TheaterId,
         Guid MovieId,
         DateTime ShowTime
@@ -70,7 +70,7 @@ public class UpdateShowingEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("showings/{showingId:guid}", async (Guid showingId, Request request, ISender sender) =>
+        app.MapPut("showings/{showingId:guid}", async (Guid showingId, UpdateShowingRequest request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand(showingId));
             if (result.IsFailure) return result.Error.ToResult();
@@ -84,7 +84,7 @@ public class UpdateShowingEndpoint : IEndpoint
 
 public static class UpdateShowingMapper
 {
-    public static UpdateShowing.Command ToCommand(this UpdateShowingEndpoint.Request request, Guid showingId)
+    public static UpdateShowing.Command ToCommand(this UpdateShowingEndpoint.UpdateShowingRequest request, Guid showingId)
     {
         return new()
         {

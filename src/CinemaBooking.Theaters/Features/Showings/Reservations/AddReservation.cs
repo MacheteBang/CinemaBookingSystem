@@ -76,13 +76,13 @@ public static class AddReservation
 
 public class AddReservationEndpoint : IEndpoint
 {
-    public record Request(Guid SeatId);
+    public record AddReservationRequest(Guid SeatId);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
         app.MapPost(
             "showings/{showingId:guid}/reservations",
-            async (Guid showingId, Request request, ISender sender) =>
+            async (Guid showingId, AddReservationRequest request, ISender sender) =>
             {
                 var result = await sender.Send(request.ToCommand(showingId));
                 if (result.IsFailure) return result.Error.ToResult();
@@ -101,7 +101,7 @@ public class AddReservationEndpoint : IEndpoint
 
 public static class AddReservationMapper
 {
-    public static AddReservation.Command ToCommand(this AddReservationEndpoint.Request request, Guid showingId)
+    public static AddReservation.Command ToCommand(this AddReservationEndpoint.AddReservationRequest request, Guid showingId)
     {
         return new()
         {

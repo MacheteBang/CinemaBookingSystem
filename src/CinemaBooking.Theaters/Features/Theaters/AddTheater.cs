@@ -55,11 +55,11 @@ public static class AddTheater
 
 public class AddTheaterEndpoint : IEndpoint
 {
-    public record Request(string Name, string SeatingArrangement);
+    public record AddTheaterRequest(string Name, string SeatingArrangement);
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("theaters", async (Request request, ISender sender) =>
+        app.MapPost("theaters", async (AddTheaterRequest request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
             if (result.IsFailure) return result.Error.ToResult();
@@ -77,7 +77,7 @@ public class AddTheaterEndpoint : IEndpoint
 
 public static class AddTheaterMapper
 {
-    public static AddTheater.Command ToCommand(this AddTheaterEndpoint.Request request)
+    public static AddTheater.Command ToCommand(this AddTheaterEndpoint.AddTheaterRequest request)
     {
         return new()
         {

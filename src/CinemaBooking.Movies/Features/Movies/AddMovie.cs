@@ -56,7 +56,7 @@ public static class AddMovie
 
 public class AddMovieEndpoint : IEndpoint
 {
-    public record Request(
+    public record AddMovieRequest(
         string Title,
         string? Description,
         TimeSpan? Duration,
@@ -65,7 +65,7 @@ public class AddMovieEndpoint : IEndpoint
 
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("movies", async (Request request, ISender sender) =>
+        app.MapPost("movies", async (AddMovieRequest request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand());
             if (result.IsFailure) return result.Error.ToResult();
@@ -83,7 +83,7 @@ public class AddMovieEndpoint : IEndpoint
 
 public static class AddMovieMapper
 {
-    public static AddMovie.Command ToCommand(this AddMovieEndpoint.Request request)
+    public static AddMovie.Command ToCommand(this AddMovieEndpoint.AddMovieRequest request)
     {
         return new()
         {

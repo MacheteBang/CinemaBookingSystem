@@ -58,14 +58,13 @@ public static class UpdateTheater
 
 public class UpdateTheaterEndpoint : IEndpoint
 {
-    public record Request(
+    public record UpdateTheaterRequest(
         string Name
     );
 
-
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("theaters/{theaterId:guid}", async (Guid theaterId, Request request, ISender sender) =>
+        app.MapPut("theaters/{theaterId:guid}", async (Guid theaterId, UpdateTheaterRequest request, ISender sender) =>
         {
             var result = await sender.Send(request.ToCommand(theaterId));
             if (result.IsFailure) return result.Error.ToResult();
@@ -79,7 +78,7 @@ public class UpdateTheaterEndpoint : IEndpoint
 
 public static class UpdateTheaterMapper
 {
-    public static UpdateTheater.Command ToCommand(this UpdateTheaterEndpoint.Request request, Guid theaterId)
+    public static UpdateTheater.Command ToCommand(this UpdateTheaterEndpoint.UpdateTheaterRequest request, Guid theaterId)
     {
         return new()
         {
